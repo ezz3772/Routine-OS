@@ -1,0 +1,2360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Routine OS — Ahmed Ramadan Abdelaziz</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --cream:#F9F6F1;--warm:#FDFBF8;--ink:#1C1C1C;--ink2:#4A4A4A;--muted:#8A8A8A;
+  --a:#8B6F47;--al:#D4B896;--ap:#F0E8DC;--line:#E2D9CE;--green:#5A7A5A;
+  --shadow:rgba(139,111,71,.12);--red:#C0392B;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--ink);min-height:100vh}
+a{color:var(--a);text-decoration:none}
+/* HEADER */
+.top-bar{background:linear-gradient(90deg,#8B6F47,#D4B896,#8B6F47);height:3px}
+.header{background:var(--warm);border-bottom:1px solid var(--line);padding:1.4rem 1.5rem 0;position:relative;max-width:100%}
+.hdr-top-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;padding-left:2.5rem}
+.hdr-breadcrumb{font-size:.68rem;font-weight:700;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;display:flex;align-items:center;gap:.3rem}
+.hdr-score-pill{background:var(--a);color:#fff;font-family:'Cormorant Garamond',serif;font-size:.95rem;font-weight:700;border-radius:24px;padding:.28rem .9rem;letter-spacing:.04em;white-space:nowrap}
+.hdr-identity{text-align:center;margin-bottom:.9rem}
+.hdr-owner{font-size:.66rem;color:var(--muted);letter-spacing:.14em;text-transform:uppercase;margin-bottom:.5rem}
+.hdr-title{font-family:'Cormorant Garamond',serif;font-size:2.7rem;line-height:1.05;margin-bottom:.2rem;display:flex;align-items:baseline;justify-content:center;gap:.4rem}
+.hdr-title .life{font-style:italic;font-weight:400;color:var(--ink)}
+.hdr-title .os{font-weight:700;color:var(--a)}
+.hdr-tagline{font-size:.66rem;color:var(--muted);letter-spacing:.13em;text-transform:uppercase;margin-bottom:1rem}
+.hdr-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:.55rem;margin:0 0 1.1rem}
+.hdr-stat{border:1.5px solid var(--line);border-radius:12px;padding:.7rem .4rem;text-align:center;background:var(--cream)}
+.hdr-stat-n{font-family:'Cormorant Garamond',serif;font-size:1.75rem;font-weight:700;color:var(--a);line-height:1}
+.hdr-stat-l{font-size:.56rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-top:.15rem}
+.tab-nav{display:flex;gap:0;border-top:1px solid var(--line);overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.tab-nav::-webkit-scrollbar{display:none}
+.tab-btn{flex-shrink:0;background:none;border:none;border-bottom:2px solid transparent;padding:.65rem 1rem;font-family:'DM Sans',sans-serif;font-size:.76rem;font-weight:600;color:var(--muted);cursor:pointer;transition:all .2s;white-space:nowrap;letter-spacing:.02em}
+.tab-btn:hover{color:var(--a)}
+.tab-btn.active{color:var(--a);border-bottom-color:var(--a);background:var(--ap)}
+.week-bar{background:var(--ap);border-bottom:1px solid var(--line);padding:.55rem 1.5rem;display:flex;gap:1.2rem;align-items:center;flex-wrap:wrap}
+.week-bar-ig{display:flex;align-items:center;gap:.5rem}
+.week-bar-lbl{font-size:.63rem;font-weight:700;color:var(--a);text-transform:uppercase;letter-spacing:.07em;white-space:nowrap}
+.week-bar-ig input{border:1px solid var(--al);border-radius:8px;padding:.28rem .6rem;font-family:'DM Sans',sans-serif;font-size:.82rem;color:var(--ink);background:var(--warm);outline:none;transition:border-color .2s}
+.week-bar-ig input:focus{border-color:var(--a)}
+.focus-inp{min-width:200px}
+.ham-btn{position:absolute;top:1.4rem;left:1.2rem;background:none;border:1px solid var(--line);border-radius:8px;padding:.42rem .52rem;cursor:pointer;font-size:1rem;color:var(--ink2);transition:all .2s;z-index:10}
+.ham-btn:hover{background:var(--ap);border-color:var(--al)}
+/* TOC SIDEBAR */
+.toc-overlay{display:none;position:fixed;inset:0;background:rgba(28,28,28,.35);z-index:100}
+.toc-overlay.open{display:block}
+.toc-panel{position:fixed;top:0;left:-340px;width:320px;height:100vh;background:var(--warm);border-right:1px solid var(--line);z-index:101;overflow-y:auto;transition:left .3s ease;box-shadow:4px 0 30px var(--shadow)}
+.toc-panel.open{left:0}
+.toc-ph{background:linear-gradient(135deg,var(--a),var(--al));padding:1.2rem 1.5rem;display:flex;justify-content:space-between;align-items:center}
+.toc-pt{font-family:'Cormorant Garamond',serif;font-size:1.3rem;font-weight:600;color:#fff}
+.toc-xbtn{background:rgba(255,255,255,.2);border:none;color:#fff;border-radius:6px;padding:.3rem .6rem;cursor:pointer;font-size:1rem}
+.toc-body{padding:.5rem 0}
+.toc-cat{border-bottom:1px solid var(--line)}
+.toc-cbtn{width:100%;background:none;border:none;padding:.8rem 1.5rem;display:flex;justify-content:space-between;align-items:center;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:.85rem;font-weight:600;color:var(--ink);transition:background .2s;text-align:left}
+.toc-cbtn:hover{background:var(--ap)}
+.toc-chev{font-size:.7rem;transition:transform .2s;color:var(--a)}
+.toc-cbtn.open .toc-chev{transform:rotate(90deg)}
+.toc-subs{display:none;padding:.2rem 0 .4rem}
+.toc-subs.open{display:block}
+.toc-sl{display:block;padding:.4rem 1.5rem .4rem 2.4rem;font-size:.8rem;color:var(--ink2);cursor:pointer;transition:all .2s}
+.toc-sl:hover{background:var(--ap);color:var(--a);padding-left:2.7rem}
+/* MAIN */
+.main{max-width:1200px;margin:0 auto;padding:2rem 1.5rem}
+/* CATEGORY HEADER */
+.cat-hdr{display:flex;align-items:center;gap:.6rem;margin:2rem 0 .75rem}
+.cat-title{font-family:'Cormorant Garamond',serif;font-size:1.6rem;font-weight:600;color:var(--a)}
+.cat-line{flex:1;height:1px;background:var(--line)}
+/* SECTION CARD */
+.sec-card{background:var(--warm);border:1px solid var(--line);border-radius:12px;box-shadow:0 4px 20px var(--shadow);margin-bottom:1.2rem;overflow:hidden}
+.sec-hdr{background:linear-gradient(135deg,var(--a),var(--al));padding:.8rem 1rem;display:flex;justify-content:space-between;align-items:center;gap:.5rem}
+.sec-hdr-l{display:flex;align-items:center;gap:.5rem;min-width:0;flex:1}
+.sec-emoji{font-size:1.1rem;flex-shrink:0}
+.sec-title{font-family:'Cormorant Garamond',serif;font-size:1.15rem;font-weight:600;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.toc-ret{background:rgba(255,255,255,.2);border:none;color:#fff;border-radius:6px;padding:.3rem .5rem;cursor:pointer;font-size:1rem;line-height:1;flex-shrink:0}
+.toc-ret:hover{background:rgba(255,255,255,.35)}
+/* TASK TABLE */
+.task-tbl{table-layout:fixed;width:100%;border-collapse:collapse}
+.task-tbl th{background:var(--ap);font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--a);padding:.45rem .4rem;border-bottom:1px solid var(--line);text-align:center}
+.task-tbl th:first-child{text-align:left;padding-left:1rem;width:auto}
+.task-tbl th:not(:first-child):not(:last-child){width:32px}
+.task-tbl th:last-child{width:72px;min-width:72px;white-space:nowrap}
+.task-tbl td{padding:.5rem .4rem;border-bottom:1px solid var(--line);vertical-align:middle}
+.task-tbl td:last-child{font-size:.72rem;color:var(--a);white-space:normal;text-align:center;width:72px;min-width:72px;word-break:break-word;line-height:1.3}
+.task-tbl tr:last-child>td{border-bottom:none}
+.tnc{padding-left:1rem !important}
+.tnbtn{background:none;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:.87rem;color:var(--ink);text-align:left;padding:0;display:flex;align-items:center;gap:.4rem;transition:color .2s}
+.tnbtn:hover{color:var(--a)}
+.texp{font-size:.6rem;color:var(--al);transition:transform .2s;display:inline-block}
+.texp.open{transform:rotate(180deg)}
+.cb-cell{text-align:center}
+.day-cb{width:20px;height:20px;cursor:pointer;accent-color:var(--a)}
+/* DETAIL ROW */
+.det-row td{padding:0 !important;border-bottom:1px solid var(--line) !important}
+.det-card{display:none;background:var(--cream);border-top:2px solid var(--al);padding:1.2rem}
+.det-card.open{display:block}
+.det-hdr{background:linear-gradient(135deg,var(--a),var(--al));border-radius:8px;padding:.9rem 1.1rem;display:flex;align-items:center;gap:.75rem;margin-bottom:1rem}
+.det-ico{font-size:1.6rem}
+.det-meta{flex:1}
+.det-tag{font-size:.58rem;font-weight:700;letter-spacing:.12em;color:rgba(255,255,255,.8);text-transform:uppercase;margin-bottom:.1rem}
+.det-name{font-family:'Cormorant Garamond',serif;font-size:1.2rem;color:#fff;font-weight:600}
+.det-xbtn{background:rgba(255,255,255,.2);border:none;color:#fff;border-radius:50%;width:26px;height:26px;cursor:pointer;font-size:.9rem;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.det-xbtn:hover{background:rgba(255,255,255,.4)}
+.det-stitle{font-size:.68rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--a);margin:.9rem 0 .5rem}
+.det-why{background:var(--ap);border-left:4px solid var(--a);border-radius:0 8px 8px 0;padding:.85rem 1rem;font-size:.85rem;line-height:1.7;color:var(--ink2)}
+/* HABIT LOOP */
+.loop-grid{display:grid;grid-template-columns:1fr 1fr;gap:.6rem}
+.lc{border-radius:8px;padding:.7rem .9rem}
+.lc-lbl{font-size:.58rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;margin-bottom:.25rem}
+.lc-txt{font-size:.82rem;line-height:1.5}
+.lc-cue{background:#E8F4FD;border-left:3px solid #2980B9;color:#1a5276}
+.lc-crv{background:#E9F7EF;border-left:3px solid #27AE60;color:#1a5c33}
+.lc-res{background:#FEF5E4;border-left:3px solid #D4763B;color:#7d4a1a}
+.lc-rew{background:#FDEDEC;border-left:3px solid #E74C3C;color:#78281f}
+/* SUBTASKS */
+.sub-list{display:flex;flex-direction:column;gap:.35rem}
+.sub-item{display:flex;align-items:flex-start;gap:.65rem;padding:.55rem .75rem;border-radius:8px;border:1.5px solid var(--line);background:var(--cream);cursor:pointer;transition:all .2s}
+.sub-item:hover{border-color:var(--al);background:var(--ap)}
+.sub-item.done{border-color:var(--green);background:#f0f5f0}
+.sub-chk{width:20px;height:20px;border-radius:50%;border:2px solid var(--line);background:var(--warm);flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .2s;font-size:.65rem}
+.sub-item.done .sub-chk{background:var(--green);border-color:var(--green);color:#fff}
+.sub-num{font-size:.6rem;font-weight:700;color:var(--a);flex-shrink:0;margin-top:.15rem;min-width:14px}
+.sub-txt{font-size:.83rem;color:var(--ink2);line-height:1.5;flex:1}
+.sub-item.done .sub-txt{text-decoration:line-through;color:var(--muted)}
+.sub-prog{background:var(--ap);color:var(--a);border:1px solid var(--al);border-radius:20px;padding:.12rem .5rem;font-size:.65rem;font-weight:700}
+.rst-btn{margin-top:.6rem;background:none;border:1px solid var(--al);color:var(--a);border-radius:6px;padding:.3rem .7rem;font-size:.73rem;cursor:pointer;font-family:'DM Sans',sans-serif}
+.rst-btn:hover{background:var(--ap)}
+/* META PILLS */
+.impact-grid{display:grid;grid-template-columns:1fr 1fr;gap:.8rem;background:var(--ap);border-radius:8px;padding:.8rem 1rem}
+.imp-lbl{font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:.2rem}
+.imp-val{font-size:.88rem;font-weight:600;color:var(--ink)}
+.tags-list{display:flex;flex-wrap:wrap;gap:.35rem}
+.tag-pill{background:var(--ap);color:var(--a);border:1px solid var(--al);border-radius:20px;padding:.25rem .65rem;font-size:.72rem}
+/* AZKAR */
+.azk-item{display:flex;justify-content:space-between;align-items:flex-start;padding:.6rem 0;border-bottom:1px solid var(--line);gap:1rem}
+.azk-item:last-child{border-bottom:none}
+.azk-ar{font-size:1rem;direction:rtl;text-align:right;color:var(--ink);line-height:1.9;flex:1}
+.azk-tr{font-size:.73rem;color:var(--ink2);font-style:italic;margin-top:.25rem}
+.azk-c{background:var(--a);color:#fff;font-size:.68rem;font-weight:700;padding:.18rem .5rem;border-radius:20px;flex-shrink:0;margin-top:.2rem}
+/* DEPARTURE CHECKLIST */
+.dep-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:.55rem;padding:1.1rem}
+.dep-tile{display:flex;align-items:center;gap:.55rem;padding:.65rem .9rem;border-radius:10px;border:2px solid var(--line);background:var(--cream);cursor:pointer;transition:all .2s;user-select:none;flex-wrap:nowrap;min-width:0}
+.dep-tile.chk{border-color:var(--a);background:var(--ap)}
+.dep-box{width:18px;height:18px;border-radius:4px;border:2px solid var(--line);background:var(--warm);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:.7rem;transition:all .2s}
+.dep-tile.chk .dep-box{background:var(--a);border-color:var(--a);color:#fff}
+.dep-lbl{font-size:.81rem;color:var(--ink2);flex:1;min-width:0;word-break:break-word}
+.dep-tile.chk .dep-lbl{color:var(--a);font-weight:600}
+.dep-footer{padding:0 1.1rem 1.1rem;display:flex;justify-content:space-between;align-items:center}
+.dep-cnt{font-size:.8rem;font-weight:600;color:var(--a)}
+.dep-rst{background:none;border:1px solid var(--al);color:var(--a);border-radius:6px;padding:.3rem .7rem;font-size:.73rem;cursor:pointer;font-family:'DM Sans',sans-serif}
+.dep-rst:hover{background:var(--ap)}
+/* AFTER WORK GRID */
+.aw-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.2rem;padding:1.1rem}
+/* MOOD */
+.mood-body{padding:1.1rem}
+.mood-grid{display:grid;grid-template-columns:auto repeat(5,1fr);gap:.45rem;align-items:center;margin-bottom:1.2rem}
+.mood-rl{font-size:.7rem;font-weight:700;color:var(--muted);text-align:right;padding-right:.4rem}
+.mood-col{text-align:center}
+.mood-ch{font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--a);margin-bottom:.35rem}
+.mood-ebtn{display:block;width:100%;background:none;border:2px solid var(--line);border-radius:8px;padding:.25rem;cursor:pointer;font-size:1rem;transition:all .2s;margin-bottom:.2rem}
+.mood-ebtn.sel{border-color:var(--a);background:var(--ap);transform:scale(1.08)}
+.sl-row{display:grid;grid-template-columns:140px 1fr 2rem;gap:.65rem;align-items:center;margin-bottom:.5rem}
+.sl-lbl{font-size:.8rem;color:var(--ink2);font-weight:500}
+.sl-val{font-size:.88rem;font-weight:700;color:var(--a);text-align:center}
+input[type=range]{width:100%;accent-color:var(--a);cursor:pointer}
+.bar-chart{display:flex;gap:.4rem;align-items:flex-end;height:110px;margin:.8rem 0 .4rem}
+.bar-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:.2rem;height:100%;justify-content:flex-end}
+.bar-fill{width:100%;border-radius:4px 4px 0 0;transition:height .4s ease;min-height:4px}
+.bar-lbl{font-size:.52rem;color:var(--muted);text-align:center}
+.pills-grp{display:flex;flex-wrap:wrap;gap:.35rem;margin-bottom:.8rem}
+.bpill,.dpill{border-radius:20px;padding:.25rem .7rem;font-size:.76rem;cursor:pointer;transition:all .2s;border:1.5px solid transparent}
+.bpill{background:var(--ap);color:var(--a);border-color:var(--al)}
+.bpill.act{background:var(--a);color:#fff}
+.dpill{background:#FDEDEC;color:var(--red);border-color:#f1948a}
+.dpill.act{background:var(--red);color:#fff}
+.refl-grid{display:grid;grid-template-columns:1fr 1fr;gap:.65rem;margin-bottom:.8rem}
+.refl-f label{font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--a);display:block;margin-bottom:.25rem}
+.refl-f textarea{width:100%;height:80px;border:1px solid var(--line);border-radius:8px;padding:.55rem .7rem;font-family:'DM Sans',sans-serif;font-size:.81rem;color:var(--ink);background:var(--cream);resize:vertical;outline:none}
+.refl-f textarea:focus{border-color:var(--a)}
+.save-btn{width:100%;background:linear-gradient(135deg,var(--a),var(--al));color:#fff;border:none;border-radius:10px;padding:.8rem;font-size:.88rem;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif}
+.save-btn:hover{opacity:.88}
+/* PROGRESS */
+.prog-body{padding:1.1rem}
+.prog-row{margin-bottom:.8rem}
+.prog-rh{display:flex;justify-content:space-between;align-items:center;margin-bottom:.25rem}
+.prog-lbl{font-size:.82rem;font-weight:600;color:var(--ink2)}
+.prog-pct{font-size:.82rem;font-weight:700;color:var(--a)}
+.prog-bg{background:var(--line);border-radius:6px;height:7px;overflow:hidden}
+.prog-fill{background:linear-gradient(90deg,var(--a),var(--al));border-radius:6px;height:100%;transition:width .5s ease}
+/* RULES */
+.rules-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.65rem;padding:1.1rem}
+.rule-c{background:var(--warm);border:1px solid var(--line);border-left:4px solid var(--a);border-radius:8px;padding:.9rem 1rem}
+.rule-n{font-size:.62rem;font-weight:700;color:var(--a);margin-bottom:.25rem}
+.rule-t{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:1rem;color:var(--ink);line-height:1.4}
+/* MONTHLY HABITS */
+.mo-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.65rem;padding:1.1rem}
+.mo-card{background:var(--cream);border:1px solid var(--line);border-radius:10px;padding:.8rem .9rem}
+.mo-top{display:flex;align-items:center;gap:.45rem;margin-bottom:.5rem}
+.mo-name{font-size:.83rem;font-weight:500;color:var(--ink)}
+.mo-dots{display:flex;gap:.35rem;flex-wrap:wrap}
+.mo-dot{width:26px;height:26px;border-radius:50%;border:2px solid var(--line);background:var(--warm);cursor:pointer;font-size:.62rem;font-weight:700;color:var(--muted);display:flex;align-items:center;justify-content:center;transition:all .2s}
+.mo-dot.done{background:var(--a);border-color:var(--a);color:#fff}
+/* STRETCH */
+.stretch-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:.65rem;padding:1.1rem}
+.stretch-c{background:var(--ap);border:1px solid var(--al);border-radius:8px;padding:.7rem;text-align:center}
+.stretch-n{font-size:.76rem;font-weight:600;color:var(--ink);margin-bottom:.1rem}
+.stretch-d{font-size:.66rem;color:var(--muted)}
+/* SUB HEADER BAND */
+.sub-band{background:var(--ap);padding:.45rem 1.2rem;font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--a);border-bottom:1px solid var(--line)}
+footer{text-align:center;padding:1.5rem;color:var(--muted);font-size:.76rem;border-top:1px solid var(--line);margin-top:2rem}
+/* TAB PANELS */
+.tab-panel{display:none}.tab-panel.active{display:block}
+/* RULES EDIT */
+.rule-del-btn{display:none;background:none;border:none;color:var(--muted);cursor:pointer;font-size:.85rem;position:absolute;top:.5rem;right:.5rem;padding:.15rem .3rem;border-radius:4px;line-height:1;transition:color .2s}
+body.edit-mode .rule-del-btn{display:block}
+.rule-del-btn:hover{color:var(--red)}
+.rule-c{position:relative}
+.rule-add-row{display:none;padding:.6rem 1.1rem;border-top:1px solid var(--line);gap:.5rem;align-items:center}
+body.edit-mode .rule-add-row{display:flex}
+/* MO EDIT */
+.mo-del-btn{display:none;background:none;border:none;color:var(--muted);cursor:pointer;font-size:.8rem;padding:.1rem .25rem;border-radius:4px;line-height:1;flex-shrink:0;transition:color .2s}
+body.edit-mode .mo-del-btn{display:flex;align-items:center}
+.mo-del-btn:hover{color:var(--red)}
+.mo-name-edit{flex:1;min-width:0}
+/* EDIT MODE */
+.edit-mode-btn{position:fixed;bottom:1.5rem;right:1.5rem;z-index:200;background:var(--ap);border:1px solid var(--al);border-radius:24px;padding:.55rem 1.1rem;cursor:pointer;font-size:.8rem;font-weight:600;color:var(--a);font-family:'DM Sans',sans-serif;transition:all .2s;display:flex;align-items:center;gap:.35rem;box-shadow:0 4px 16px var(--shadow)}
+.edit-mode-btn:hover{background:var(--al);color:#fff}
+.edit-mode-btn.active{background:var(--a);color:#fff;border-color:var(--a)}
+body.edit-mode [data-editable]{outline:1.5px dashed var(--al);border-radius:4px;cursor:text;padding:1px 3px;transition:outline .15s}
+body.edit-mode [data-editable]:hover{outline:2px solid var(--a);background:rgba(139,111,71,.07)}
+body.edit-mode [data-editable]:focus{outline:2px solid var(--a);background:rgba(139,111,71,.1);border-radius:4px}
+body.edit-mode [data-editable].light-editable{outline-color:rgba(255,255,255,.5)}
+body.edit-mode [data-editable].light-editable:hover{outline-color:#fff;background:rgba(255,255,255,.15)}
+body.edit-mode [data-editable].light-editable:focus{outline-color:#fff;background:rgba(255,255,255,.2)}
+.edit-banner{display:none;background:linear-gradient(135deg,var(--a),var(--al));color:#fff;text-align:center;font-size:.78rem;font-weight:600;padding:.45rem;letter-spacing:.04em}
+body.edit-mode .edit-banner{display:block}
+.add-item-btn,.del-item-btn{display:none}
+body.edit-mode .add-item-btn,body.edit-mode .del-item-btn{display:inline-flex}
+.add-item-btn{background:rgba(255,255,255,.18);border:1px dashed rgba(255,255,255,.6);color:#fff;border-radius:6px;padding:.2rem .55rem;font-size:.72rem;cursor:pointer;align-items:center;gap:.25rem;font-family:'DM Sans',sans-serif;margin-left:.5rem;transition:background .2s}
+.add-item-btn:hover{background:rgba(255,255,255,.3)}
+.del-item-btn{background:rgba(220,38,38,.1);border:1px solid rgba(220,38,38,.4);color:#dc2626;border-radius:6px;padding:.18rem .55rem;font-size:.7rem;font-weight:700;cursor:pointer;align-items:center;font-family:'DM Sans',sans-serif;margin-left:.4rem;transition:all .2s;line-height:1}
+.del-item-btn:hover{background:#dc2626;color:#fff}
+.add-step-btn{display:none;background:var(--ap);border:1px dashed var(--al);color:var(--a);border-radius:6px;padding:.3rem .7rem;font-size:.75rem;cursor:pointer;font-family:'DM Sans',sans-serif;margin-top:.4rem;width:100%;transition:background .2s}
+body.edit-mode .add-step-btn{display:block}
+.add-step-btn:hover{background:var(--al);color:#fff}
+.del-step-btn{display:none;background:none;border:none;color:var(--muted);cursor:pointer;font-size:.85rem;padding:.1rem .3rem;flex-shrink:0;line-height:1;border-radius:4px;transition:color .2s}
+body.edit-mode .del-step-btn{display:flex;align-items:center}
+.del-step-btn:hover{color:#dc2626}
+body.edit-mode .sub-item{cursor:default}
+.add-task-row{display:none;padding:.5rem 1rem;border-top:1px solid var(--line)}
+body.edit-mode .add-task-row{display:flex;gap:.5rem;align-items:center;flex-wrap:wrap}
+.add-task-inp{border:1px solid var(--line);border-radius:7px;padding:.35rem .65rem;font-family:'DM Sans',sans-serif;font-size:.84rem;color:var(--ink);background:var(--cream);outline:none;flex:1;min-width:120px}
+.add-task-inp:focus{border-color:var(--a)}
+.add-task-do{background:linear-gradient(135deg,var(--a),var(--al));color:#fff;border:none;border-radius:7px;padding:.35rem .75rem;font-size:.82rem;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;white-space:nowrap}
+.add-task-do:hover{opacity:.88}
+.dep-edit-row{display:none;padding:.5rem 1.1rem;border-top:1px solid var(--line);gap:.5rem;align-items:center;flex-wrap:wrap}
+body.edit-mode .dep-edit-row{display:flex}
+.dep-del-btn{display:none;background:none;border:none;color:#dc2626;font-size:.9rem;cursor:pointer;flex-shrink:0;padding:.1rem .4rem;transition:color .2s;line-height:1;font-weight:700}
+body.edit-mode .dep-del-btn{display:block}
+.dep-del-btn:hover{color:#991b1b}
+.mo-add-row{display:none;padding:.75rem 1.1rem;border-top:1px solid var(--line);gap:.5rem;flex-wrap:wrap;align-items:center}
+body.edit-mode .mo-add-row{display:flex}
+@media(max-width:900px){.aw-grid{grid-template-columns:1fr}.mo-grid{grid-template-columns:repeat(2,1fr)}.rules-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:768px){.header{padding:1.2rem 1rem 1rem}.hdr-title{font-size:2.2rem}.ham-btn{top:1rem;left:1rem}.dep-grid{grid-template-columns:repeat(2,1fr)}.stretch-grid{grid-template-columns:repeat(2,1fr)}.loop-grid,.refl-grid{grid-template-columns:1fr}.task-tbl th:not(:first-child):not(:last-child){width:26px}.task-tbl th:last-child{width:64px;min-width:64px}.task-tbl td:last-child{width:64px;min-width:64px;font-size:.68rem}}
+@media(max-width:480px){.main{padding:1rem .65rem}.hdr-inputs{flex-direction:column;align-items:center}.mo-grid,.rules-grid{grid-template-columns:1fr}.dep-grid{grid-template-columns:1fr;padding:.75rem;gap:.4rem}.task-tbl th:not(:first-child):not(:last-child){width:22px;padding:.45rem .15rem}.task-tbl td{padding:.5rem .15rem}.task-tbl th:last-child{width:56px;min-width:56px}.task-tbl td:last-child{width:56px;min-width:56px;font-size:.65rem}.tnc{padding-left:.5rem !important}.day-cb{width:17px;height:17px}}
+</style>
+</head>
+<body>
+
+
+<div class="toc-overlay" id="tocOverlay" onclick="closeTOC()"></div>
+<div class="toc-panel" id="tocPanel">
+  <div class="toc-ph">
+    <span class="toc-pt">&#9776; Contents</span>
+    <button class="toc-xbtn" onclick="closeTOC()">&#10005;</button>
+  </div>
+  <div class="toc-body" id="tocBody"></div>
+</div>
+<div class="top-bar"></div>
+<div class="edit-banner">✏️ Edit Mode — click any text to edit it. Changes are saved automatically.</div>
+<button class="edit-mode-btn" id="editModeBtn" onclick="toggleEditMode()">✏️ Edit</button>
+<div class="header">
+  <button class="ham-btn" onclick="openTOC()">&#9776;</button>
+  <div class="hdr-top-row">
+    <div class="hdr-breadcrumb"><span>ROUTINE OS</span></div>
+    <div class="hdr-score-pill" id="hdr-score-display">Routine OS</div>
+  </div>
+  <div class="hdr-identity">
+    <div class="hdr-owner">Ahmed Ramadan Abdelaziz &middot; Banha, Egypt</div>
+    <div class="hdr-title"><span class="life">Routine</span><span class="os">OS</span></div>
+    <div class="hdr-tagline">Routine &middot; Tracker &middot; Mood Intelligence</div>
+  </div>
+  <div class="hdr-stats">
+    <div class="hdr-stat"><div class="hdr-stat-n" id="stat-done">—</div><div class="hdr-stat-l">Done Today</div></div>
+    <div class="hdr-stat"><div class="hdr-stat-n" id="stat-total">—</div><div class="hdr-stat-l">Total Tasks</div></div>
+    <div class="hdr-stat"><div class="hdr-stat-n" id="stat-pct">—</div><div class="hdr-stat-l">Week %</div></div>
+    <div class="hdr-stat"><div class="hdr-stat-n" id="stat-week">—</div><div class="hdr-stat-l">Week No.</div></div>
+  </div>
+  <nav class="tab-nav" id="tabNav">
+    <button class="tab-btn active" onclick="switchTab('routine',this)">Routine</button>
+    <button class="tab-btn" onclick="switchTab('departure',this)">Departure</button>
+    <button class="tab-btn" onclick="switchTab('weekly',this)">Weekly</button>
+    <button class="tab-btn" onclick="switchTab('monthly',this)">Monthly</button>
+    <button class="tab-btn" onclick="switchTab('mood',this)">Mood</button>
+    <button class="tab-btn" onclick="switchTab('progress',this)">Progress</button>
+    <button class="tab-btn" onclick="switchTab('rules',this)">Rules</button>
+  </nav>
+</div>
+<div class="week-bar">
+  <div class="week-bar-ig">
+    <span class="week-bar-lbl">Week of</span>
+    <input type="week" id="weekPicker" onchange="onWeekChange()">
+  </div>
+  <div class="week-bar-ig" style="flex:1">
+    <span class="week-bar-lbl">Focus Goal</span>
+    <input type="text" class="focus-inp" id="focusGoal" placeholder="e.g. Prioritise family presence..." oninput="saveFocus()" style="flex:1">
+  </div>
+</div>
+<div class="main">
+  <div class="tab-panel active" id="panel-routine"><div id="mainContent"></div></div>
+  <div class="tab-panel" id="panel-departure"><div id="departureContent"></div></div>
+  <div class="tab-panel" id="panel-weekly"><div id="weeklyContent"></div></div>
+  <div class="tab-panel" id="panel-monthly"><div id="monthlyContent"></div></div>
+  <div class="tab-panel" id="panel-mood"><div id="moodContent"></div></div>
+  <div class="tab-panel" id="panel-progress"><div id="progressContent"></div></div>
+  <div class="tab-panel" id="panel-rules"><div id="rulesContent"></div></div>
+</div>
+<footer>Routine OS &middot; Ahmed Ramadan Abdelaziz &middot; Built with intention for a life of excellence</footer>
+
+<script>
+
+/* ============================================================
+   LIFE OS — Lean Version
+   localStorage key: lifeos-v1
+   ============================================================ */
+const SK = 'lifeos-v1';
+function loadState(){ try{ return JSON.parse(localStorage.getItem(SK))||{}; }catch(e){ return {}; } }
+function saveState(s){ localStorage.setItem(SK,JSON.stringify(s)); }
+
+// ── Azkar data ─────────────────────────────────────────────
+const SABAH = [
+  {ar:'أَصْبَحْنَا وَأَصْبَحَ الْمُلْكُ لِلَّهِ، وَالْحَمْدُ لِلَّهِ', tr:'We have entered the morning and dominion belongs to Allah', c:1},
+  {ar:'سُبْحَانَ اللَّهِ وَبِحَمْدِهِ', tr:'Glory be to Allah and His is the praise', c:100},
+  {ar:'لَا إِلَهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ', tr:'There is no god but Allah alone, no partner — His is the dominion and praise', c:10},
+  {ar:'اللَّهُمَّ إِنِّي أَسْأَلُكَ الْعَفْوَ وَالْعَافِيَةَ فِي الدُّنْيَا وَالْآخِرَةِ', tr:'O Allah I ask You for forgiveness and wellbeing in this world and the next', c:1},
+  {ar:'حَسْبِيَ اللَّهُ لَا إِلَهَ إِلَّا هُوَ، عَلَيْهِ تَوَكَّلْتُ', tr:'Sufficient for me is Allah — upon Him I rely', c:7}
+];
+const MASAA = [
+  {ar:'أَمْسَيْنَا وَأَمْسَى الْمُلْكُ لِلَّهِ، وَالْحَمْدُ لِلَّهِ', tr:'We have reached the evening and dominion belongs to Allah', c:1},
+  {ar:'أَعُوذُ بِكَلِمَاتِ اللَّهِ التَّامَّاتِ مِنْ شَرِّ مَا خَلَقَ', tr:'I seek refuge in the perfect words of Allah from the evil of what He created', c:3},
+  {ar:'سُبْحَانَ اللَّهِ وَبِحَمْدِهِ', tr:'Glory be to Allah and His is the praise', c:100},
+  {ar:'اللَّهُمَّ صَلِّ وَسَلِّمْ عَلَى نَبِيِّنَا مُحَمَّدٍ', tr:'O Allah send blessings and peace upon our Prophet Muhammad', c:10}
+];
+const NIGHT_AZK = [
+  {ar:'بِسْمِكَ اللَّهُمَّ أَمُوتُ وَأَحْيَا', tr:'In Your name O Allah I die and I live', c:1},
+  {ar:'آيَةُ الْكُرْسِيِّ كَامِلَةً', tr:'Ayat al-Kursi — recite the full verse before sleeping', c:1},
+  {ar:'قُلْ هُوَ اللَّهُ أَحَدٌ + الْفَلَقُ + النَّاسُ', tr:'Al-Ikhlas, Al-Falaq, An-Nas × 3 — blow into cupped hands and wipe over body', c:3},
+  {ar:'سُبْحَانَ اللَّهِ ×33 + الْحَمْدُ لِلَّهِ ×33 + اللَّهُ أَكْبَرُ ×34', tr:'Tasbeeh — total 100', c:1}
+];
+
+// ── Item definitions ────────────────────────────────────────
+// Each item: {id, ico, name, section, why, loop:{cue,craving,response,reward}, steps:[], dur, imp, tags:[], azkar?[]}
+const ITEMS = [];
+function def(id,ico,name,section,why,cue,craving,response,reward,steps,dur,imp,tags,azkar){
+  ITEMS.push({id,ico,name,section,why,loop:{cue,craving,response,reward},steps,dur,imp,tags,azkar});
+}
+
+// ──────────── SUNDAY–THURSDAY ROUTINE ────────────────────────
+def('wake_06','','Wake up Early','Morning Anchor',
+  'Consistent wake time anchors your circadian master clock. For a father dropping Mohamed at nursery by 07:00, this is non-negotiable — it is the keystone that cascades into every downstream habit.',
+  'Phone alarm at 06:00 — distinct tone reserved only for wake-up',
+  'Start Mohamed\'s nursery run calmly and arrive at work alert',
+  'Sit up immediately, feet on floor — do not reach for phone first',
+  'Calm, clear morning instead of rushed chaos',
+  ['Alarm set night before','Sit up within 10 seconds — do not renegotiate with the pillow','Feet on floor, 3 deep breaths','No screen for 3 minutes after waking','Walk to pre-placed water glass','Whisper Bismillah, set your intention word for the day'],
+  '2 min','🔴 Critical',['Circadian Rhythm','Keystone Habit','Cortisol Regulation']);
+
+def('water_250','','Drink water','Morning Anchor',
+  'After 6–8 hours without fluids your body wakes dehydrated. 250ml at waking improves cognitive performance by up to 14% within 20 minutes (Edmonds, University of East London).',
+  'Feet touch floor — water glass already on bedside table',
+  'Clear mind and alert body before Mohamed\'s drop-off',
+  'Drink the full 250ml in one pour — no sipping',
+  'Noticeably sharper thinking within 20 minutes',
+  ['Pre-place 250ml on bedside table the night before','Drink in one continuous pour','Room temperature absorbs fastest','Refill and track toward 2L daily target'],
+  '30 sec','🟠 High',['Hydration','Cognitive Performance']);
+
+def('breakfast_10','','Having Breakfast','Breakfast',
+  'Pre-preparing breakfast removes all decision-making from the morning. Eating without a phone trains mindful eating — even solo, it models the habit you want Mohamed to see.',
+  'Water drunk — kitchen already has prepared meal',
+  'Nourishment and calm before the nursery run',
+  'Heat the meal, sit at table, eat with full sensory presence',
+  'Satisfied, energised — no vending machine craving by 10:00',
+  ['Meal pre-prepared previous night','Heat fully (internal temp above 70°C)','Phone face-down during these 10 minutes','Sit at the table — not standing','Chew slowly','Leave kitchen tidy for Naira'],
+  '10 min','🟠 High',['Time-Restricted Eating','Mindful Eating','Morning Nutrition']);
+
+def('bike_treadmill','','Bike ride or Treadmill walk','Move First',
+  '20 minutes of moderate aerobic exercise before cognitive work increases BDNF by 200–300%, fertilising the brain for learning (Ratey, Harvard). This directly improves your decision quality on the workshop floor.',
+  'Breakfast done — workout gear pre-placed the night before',
+  'Alert, energised body before the commute',
+  'Step outside or onto treadmill immediately — no warming up to the idea',
+  'Endorphin clarity and improved mood through the entire morning',
+  ['Workout gear pre-placed the evening before (shoes at door)','Choose bike OR treadmill based on weather','Target HR: 65–75% max (~130–145 bpm)','No earphones if cycling outdoors — full sensory presence','If treadmill: podcast or Quran OK at brisk walk 5–6 km/h','No stretching — cardio only as specified','Return home → shower immediately, do not sit down first'],
+  '20–25 min','🔴 Critical',['BDNF','Aerobic Exercise','Cognitive Performance']);
+
+def('int_breathing','️','Intentional breathing','Intentional Breathing',
+  'Box breathing (4-4-4-4) activates the parasympathetic nervous system via vagal stimulation, reducing cortisol 15–20% in a single session. This is your transition ritual: body to mind, movement to stillness.',
+  'Cardio done — body warm, sitting or standing still',
+  'Calm, centred mind before prayer and departure',
+  'Sit upright, close eyes, breathe exclusively through nose',
+  'Measurable calm, slower HR, clearer thinking entering the rest of morning',
+  ['Sit upright — spine straight','Close eyes, soften shoulders','4 counts in, 4 hold, 4 out, 4 hold empty','Repeat 8–12 times','Open eyes slowly'],
+  '5–10 min','🟠 High',['Box Breathing','Vagal Nerve','Parasympathetic']);
+
+def('shower','','Shower or wash','Reset & Refresh',
+  'Post-exercise showering removes lactic acid metabolites and signals a psychological state transition. It is also physical respect before Wudu and Sobh prayer.',
+  'Breathing done — body needs cleansing before spiritual engagement',
+  'Clean, fresh-smelling start before prayer and departure',
+  'Step into shower within 2 minutes of finishing breathing',
+  'Physical freshness, confidence, readiness',
+  ['Gear pre-organised (towel hung, soap in place)','Start warm, finish 30 sec cooler for alertness','Keep under 10 minutes','Dress in pre-selected outfit immediately after'],
+  '8–10 min','🟡 Medium-High',['State Transition','Hygiene']);
+
+def('teeth','','Teeth brushing','Reset & Refresh',
+  'Most adults brush for only 45 seconds — the ADA minimum is 2 minutes. Oral bacteria directly influence systemic inflammation. Fresh breath is a social and intimate gift to Naira and colleagues.',
+  'Shower complete — bathroom routine sequence in place',
+  'Clean mouth, fresh breath, readiness for family and colleagues',
+  '2 full minutes — use phone timer or electric toothbrush',
+  'Dental health protection, confidence in communication',
+  ['Use fluoride toothpaste (min 1450ppm)','Brush all 4 quadrants + tongue','Floss 3× per week minimum','Mouthwash 30 sec'],
+  '2 min','🟢 Medium',['Oral Hygiene','Systemic Health']);
+
+def('hair','','Hair treatment','Reset & Refresh',
+  'Groomed individuals are rated 15% more competent in initial professional encounters (Northwestern Kellogg). Style decisively — you are a Healthcare Workshop Director.',
+  'Teeth brushed — moving to hair station',
+  'Professional, put-together appearance for the workshop floor',
+  'Style within 3 minutes — decisive, not perfectionist',
+  'Confidence in appearance, authority in first impressions',
+  ['Products pre-lined on shelf','If wash day: shampoo + conditioner (60 sec leave)','Towel blot — do not rub','Apply heat protectant if using heat','Style decisively — limit mirror time to 90 sec'],
+  '3–5 min','🟡 Medium-High',['Grooming','Professional Presence']);
+
+def('skin_care','','Skin & Body care','Reset & Refresh',
+  'Egypt receives 8+ hours of solar UV daily. Consistent SPF + moisturiser reduces UV-induced skin aging by 40% over 10 years. Maximum 3 minutes — routine not perfection.',
+  'Hair done — final step of physical preparation',
+  'Protected, nourished skin and confident presentation',
+  'Face first (2 products max), then quick body lotion to exposed areas',
+  'Skin protection, confidence, sensory ritual that grounds the morning',
+  ['Face wash if needed (gentle cleanser)','Serum or Vitamin C — 3–4 drops, press in gently','Face moisturiser with SPF 30+ (essential in Egyptian climate)','Body lotion to arms, neck, hands','Lip balm if needed','Maximum 3 minutes total'],
+  '3 min','🟡 Medium-High',['Skincare','UV Protection','Self-Care']);
+
+def('wudu','','Perform Wudu','Spiritual Reset',
+  'The systematic washing of Wudu stimulates acupressure points corresponding to stress-response pathways. More profoundly, Niyyah before Wudu marks the transition from worldly preparation to divine engagement.',
+  'Skin care complete — time for spiritual preparation before Sobh',
+  'Purity and readiness to stand before Allah in the morning prayer',
+  'Make Niyyah, wash methodically in the correct sequence',
+  'Spiritual cleanliness, inner calm, connection to the divine',
+  ['Make sincere Niyyah','Wash both hands to wrists ×3','Rinse mouth ×3','Sniff water into nostrils and blow out ×3','Wash face from hairline to chin ×3','Right arm to elbow ×3, then left','Wipe head once front to back','Right foot to ankle ×3, then left — ensure between toes'],
+  '3–4 min','🌙 Sacred',['Purification','Islamic Practice']);
+
+def('pray_sobh','','Pray Sobh','Spiritual Reset',
+  'Consistent five-times-daily prayer correlates with lower cortisol, reduced cardiovascular risk, and higher life satisfaction (King Abdulaziz University). For Ahmed, Sobh at the masjid when possible is an act of fatherhood — teaching Mohamed what a man\'s morning looks like.',
+  'Wudu complete — the Sobh time has entered',
+  'Allah\'s closeness, the angels\' witness, and a day under divine favour',
+  'Face Qiblah, make Takbeer, pray with full concentration',
+  'Spiritual protection for the day, deep calm, the Muslim identity anchor',
+  ['Verify Sobh time on Fajr app','Mosque if possible — Jama\'ah reward is 27×','2 Sunnah Rak\'ahs before Fard','Pray Fard — 2 Rak\'ahs aloud','After Salaam: Tasbeeh (33/33/34), Ayat al-Kursi, Du\'aa','Remain seated a few minutes — do not rush to phone'],
+  '10–15 min','🌙 Sacred',['Five Pillars','Fajr','Spiritual Discipline']);
+
+def('dress_grooming','','Dress, grooming & scent','Get Ready & Depart',
+  '"Enclothed Cognition" (Adam & Galinsky, Northwestern): wearing clothes associated with your role measurably increases cognitive performance. Pre-select your outfit the night before — zero decisions in the morning.',
+  'Shower and grooming complete — dressed and scented signals work mode',
+  'Professional authority, confidence, respect from team and hospital',
+  'Pre-selected outfit from night before — put on deliberately, not rushed',
+  'Command presence, Naira\'s appreciation, a team that sees a prepared director',
+  ['Outfit pre-selected and hung the night before','Iron or steam if needed — rumpled clothes undermine authority','Top to bottom: shirt → trousers → belt → shoes','Perfume to pulse points (3 sprays max)','Full mirror for 10 seconds — one adjustment, then stop','Set a one-word intention: "Focused" / "Calm" / "Present"'],
+  '5 min','🟡 Medium-High',['Enclothed Cognition','Professional Identity']);
+
+def('mohamed_ready','','Mohamed Nursery Readiness','Get Ready & Depart',
+  'Calm morning transitions have lasting effects on a child\'s emotional regulation throughout the day (attachment theory). Confirming Samah the evening before removes all morning uncertainty.',
+  'You are dressed — time to ensure Mohamed is ready before departure',
+  'Calm nursery drop-off, confident child, no morning chaos for Naira',
+  'Check Mohamed\'s bag (packed night before), confirm Samah, greet Mohamed warmly',
+  'Connected father-son morning, calm wife, guilt-free professional focus',
+  ['Mohamed\'s nursery bag packed the night before','Confirm Samah via message the evening before — not morning','Greet Mohamed at his level — eye contact, genuine warmth','Change nappy or help with morning hygiene calmly','Dress in pre-selected clothes','Pack into car seat safely','Brief Naira before leaving: "Samah confirmed. Bag packed. I love you."'],
+  '10–15 min','🔴 Critical',['Attachment Theory','Parenting']);
+
+def('nursery_drop','','Calm nursery drop-off','Nursery Drop & Transit',
+  'Children who experience calm, brief, positive drop-offs show lower cortisol levels throughout the day (NICHD). The "confident goodbye" — warm, clear, not prolonged — teaches Mohamed that separation is safe.',
+  'Arrived at nursery — Mohamed in arms, bag in hand',
+  'Mohamed settled, peaceful departure, no lingering guilt on the commute',
+  'Hand Mohamed over warmly, say a confident clear goodbye, do not linger',
+  'Mohamed\'s trust in the routine, your emotional freedom to focus at work',
+  ['Arrive 2–3 min before hard deadline','Greet nursery staff by name','Kneel to Mohamed\'s level: "Baba is going to work. I\'ll see you this evening."','Firm warm kiss — forehead kiss is sunnah','Turn and walk confidently — do not look back multiple times','Text Naira: "Drop done, all calm."'],
+  '5 min','🔴 Critical',['Child Attachment','Parenting']);
+
+def('park','','Park efficiently','Nursery Drop & Transit',
+  'Decision fatigue (Baumeister) shows trivial decisions consume the same cognitive resources as important ones if approached without automation. A fixed parking strategy removes this micro-stress entirely.',
+  'Nursery drop complete — drive to fixed parking location',
+  'Transit caught on time, car secure, minimal parking stress',
+  'Use the predetermined parking spot — no searching, no deliberating',
+  'Transit made comfortably, morning preserved',
+  ['Fixed parking location pre-chosen (3 options ranked by proximity)','Arrive with 10-min buffer before 07:05 transit','Lock car, check once (not 3 times — trust the beep)','Collect transit card, headphones, bag before exiting','Walk briskly — transition mentally: "I am now commuting. The morning was good."'],
+  '5 min','🟡 Medium-High',['Decision Fatigue','Commute Efficiency']);
+
+def('transit_0705','','Catch transit','Nursery Drop & Transit',
+  'The 07:05 transit is Ahmed\'s keystone logistical constraint. Miss it and the cascade of late arrival causes measurable performance degradation. Punctual, predictable commutes correlate with lower work stress scores.',
+  'Parked and walking — transit stop is 3–5 min away',
+  'Seated in transit with morning rituals beginning: Azkar, Quran, planning',
+  'Walk at brisk confident pace — do not run, but do not dawdle',
+  'Seated, breathing, ritual-time begins — the best part of the commute',
+  ['Know exact transit stop and platform','Transit card charged (check the night before)','Board first available transit at or after 07:05','Find a window seat if possible — daylight aids alertness','Settle immediately: headphones in, notebook or phone ready'],
+  '5 min walk','🔴 Critical',['Punctuality','Time Management']);
+
+def('azkar_sabah','','Azkar & Duaa (Sabah Azkar)','Morning Transit Ritual',
+  'Structured repetitive verbal practice in the first waking hour shapes the dominant mental narrative for the day (neuroscience of default mode network). The Sabah Azkar replace anxious commute mind-chatter with divine consciousness.',
+  'Seated on transit — nursery drop done, car parked',
+  'Spiritual protection, divine connection, and a mind anchored in gratitude',
+  'Open Azkar app — recite each slowly with meaning, not speed',
+  'Peace, protection, and a completely different quality of attention for the journey',
+  ['Open Hisn Al Muslim app or recite from memory','Phone on silent — not social media time','Recite with lips moving (silent or whispered)','Count with right hand or digital counter','Quality over quantity: 7 focused Azkar beat 70 mechanical ones','After Azkar: personal Du\'aa for Mohamed\'s day, Naira\'s commute, your workshop'],
+  '10–15 min','🌙 Sacred',['Dhikr','Morning Azkar','Spiritual Armour'],SABAH);
+
+def('quran_hizb','','Quran','Morning Transit Ritual',
+  'Half a Hizb daily achieves a full Khatmah in 60 days. Morning reading comprehension exceeds evening by 18–25% due to higher dopamine availability (Frontiers in Psychology, 2019). Dead transit time transformed into sacred time.',
+  'Azkar completed — phone transitions to Quran app',
+  'Progress on Khatmah, deepening Quran relationship',
+  'Open at exact bookmark — read slowly and purposefully',
+  'Pages completed, spiritual elevation, the quiet honour of a person of Quran',
+  ['Keep digital bookmark updated','Use word-by-word translation app if meaning unclear','Read with lips moving (even silently) — sunnah method','Aim for 10 pages — 5 consistent pages beats 20 sporadic','If a verse moves you: pause 30 seconds, reflect, continue','Bookmark immediately before closing'],
+  '15–20 min','🌙 Sacred',['Quran Khatmah','Islamic Devotion']);
+
+def('todo_list','','Day To-do list','Morning Transit Ritual',
+  'Pre-organised task lists reduce decision fatigue by 40% and improve task completion by 32% (Princeton). Writing tasks externalises cognitive load — working memory clears and becomes available for creative problem-solving.',
+  'Quran reading complete — transition from spiritual to strategic mode',
+  'Clear, organised entry to the workshop floor with a plan, not chaos',
+  'Brain dump everything, then sort into Q1/Q2/Q3/Q4',
+  'Mental clarity, professional control, satisfying ticks across the workday',
+  ['Open Notes app or pocket notebook','Brain dump: write every task in your head — do not filter yet','Review yesterday\'s list — carry forward uncompleted items','Eisenhower sort: Q1 Urgent+Important | Q2 Important | Q3 Urgent only | Q4 Neither','Identify single MIT (Most Important Task)','Time-box the MIT in calendar immediately','Delete or delegate Q3/Q4 items without guilt'],
+  '5–10 min','🟠 High',['Eisenhower Matrix','MIT','Task Management']);
+
+def('podcast_am','','Podcast or audiobook','Morning Transit Ritual',
+  'Consistent 30-minute learning blocks during commute accumulate to 180+ hours of education annually (Clear). "Extractive listening" means pulling 1–2 key ideas per episode — not passive entertainment.',
+  'To-do list written — remaining transit time for learning',
+  'Professional knowledge, new perspectives, ideas for the workshop',
+  'Open curated podcast playlist — play at 1.25–1.5× speed with full attention',
+  'One actionable idea extracted, professional edge maintained',
+  ['Pre-downloaded episodes (no data dependency underground)','Use 1.25× speed for improved information density','Have a text note ready to capture the 1 key idea','Curate playlists by category: Leadership, Medical, Personal Development, Arabic','Voice-memo the key idea in 15 sec on exit from transit'],
+  '10–15 min','🟡 Medium-High',['Commute Learning','Professional Development']);
+
+def('calm_transit','','Calm transit & mindful arrival','Morning Transit Ritual',
+  'Professionals who used the last 5 minutes of commute for mental preparation reported 31% higher work engagement in the first hour (Aston Business School). Mindful arrival means stepping off transit already in "workshop director mode."',
+  'Approaching destination — podcast paused, phone in pocket',
+  'Entering the workshop with presence, calm, and professional readiness',
+  'Close all apps, look up, take 3 slow breaths, review your MIT',
+  'Grounded first 30 minutes at work, team sees a present leader',
+  ['5 min before arrival: pause all media — no more inputs','Put phone in pocket or bag','Look up and observe the environment — a simple grounding practice','Review your MIT mentally — first task after settling in','Take 3 slow nasal breaths: 4 count in, 6 count out','Whisper Bismillah and your professional intention','Step off transit: deliberate, unhurried pace — authority is in your stride'],
+  '5 min','🟠 High',['Mindful Transition','Presence','Professional Mode']);
+
+def('hydration_posture','','Hydration & posture','Work Execution',
+  'Mild dehydration of just 1–2% body weight reduces cognitive performance by 10–20% (Frontiers in Nutrition). Slouching compresses the diaphragm, reduces lung capacity by 30%. Both are non-negotiable for workshop leadership.',
+  'Settled at desk after morning transit — workday officially begins',
+  'Sustained energy, clear thinking, physical authority on the workshop floor',
+  'Water bottle on desk visible at all times — drink at regular intervals',
+  'Consistent afternoon performance, no energy crash, back pain prevention',
+  ['Place 1L water bottle on desk immediately upon arrival','Set phone timer every 45 min — hydration and posture reminder','At each timer: 2–3 large sips + posture check','Spine: ears over shoulders, shoulders over hips','Walk 2 min around workshop at each break','500ml by lunch, 500ml by end of day'],
+  'Throughout day','🟠 High',['Hydration','Posture','Cognitive Performance']);
+
+def('emails_30','','Emails','Work Execution',
+  'The 4D Rule (Do/Defer/Delegate/Delete) reduces email processing time by up to 60% while ensuring nothing slips. Time-boxed email prevents reactive management and preserves deep work windows.',
+  'First 30 min after arrival settled — emails now contained',
+  'Clean inbox, no pending anxieties, freedom to enter deep work',
+  'Open email for exactly 30 minutes — timer running, 4D every item',
+  'Inbox processed, team served, cognitive bandwidth freed',
+  ['Set 30-min timer before opening email — hard stop when it rings','Process top to bottom — do not cherry-pick by sender','Do: reply if under 2 minutes','Defer: flag and schedule calendar block','Delegate: forward with clear instructions','Delete: anything not requiring your action','Unsubscribe from non-work lists'],
+  '30 min','🟠 High',['4D Rule','Email Management','Time Boxing']);
+
+def('deep_work','','Deep work','Work Execution',
+  '2–4 hours of true deep work per day exceeds the output of 8 distracted hours (Cal Newport). For Ahmed, deep work includes: workshop process improvement, equipment maintenance scheduling, MO request analysis, procurement vendor evaluation.',
+  'Emails done — full cognitive capacity available for strategic work',
+  'Significant progress on the tasks that matter most to your career',
+  'Close all notifications, single task only — MIT first',
+  'Tangible professional output and the compound effect on career excellence',
+  ['Block 2-hour window in calendar — visible to team as "focus time"','Physical signal: do not disturb (closed door or headphones)','All notifications off — phone face-down','Work on single MIT only — no task-switching','Pomodoro optional: 50-min work / 10-min break','Log output at end: what did you accomplish?'],
+  '2 hours','🔴 Critical',['Deep Work','Cal Newport','Professional Excellence']);
+
+def('family_call','','Family connection call','Work Execution',
+  'Small, consistent positive interactions maintain relationship satisfaction (Gottman Institute). A brief midday call to Naira reduces afternoon cortisol by 12% and improves evening family engagement quality (UCLA).',
+  'Deep work completing — natural break point in the workday',
+  'Naira\'s voice, confirmation of her safety, husband-wife warmth',
+  'Step outside or into quiet space — call Naira for 5–10 genuine minutes',
+  'Connected couple, reassured wife, refreshed Ahmed for afternoon',
+  ['Call during a natural transition — after deep work or before lunch','Go somewhere private','Open with genuine interest: "How is your morning going?"','Confirm she arrived at work safely','Share one small observation from your day','Close with a specific plan: "I\'ll be home by X"','Be still, be present — not calling while walking between tasks'],
+  '5–10 min','🔴 Critical',['Marriage','Gottman Method','Connection']);
+
+def('workshop_rounds','','Workshop observation rounds (MBWA)','Work Execution',
+  'Management By Walking Around is the single highest-ROI management behaviour for hands-on leaders. MBWA leaders are rated 40% higher in "trust" by direct reports (Harvard Business Review).',
+  'Post-lunch or midday — time to step off the chair and walk the floor',
+  'Team visibility, problem prevention, and respect as a present director',
+  'Walk the entire workshop floor with genuine curiosity — not inspection',
+  'Issues caught early, team trust built, intelligence gathered no meeting provides',
+  ['Schedule at least one floor walk per day','Walk with genuine interest — ask questions, do not just observe','Greet each technician by name','Ask: "What\'s in your way today?"','Observe equipment status: unusual sounds, smells, alerts','Note 1 observation per walk in pocket notebook','End walk with one genuine specific encouragement'],
+  '15–20 min','🟠 High',['MBWA','Leadership','Team Management']);
+
+def('lunch_detox','','Lunch reset','Work Execution',
+  'Microbreaks restore directed attention and reduce decision fatigue more effectively than working through lunch (University of Illinois). The reset protocol improves afternoon performance by 23%.',
+  'Clock reaches 12:00 — laptop closes regardless of task state',
+  'Nourishment, physical movement, and a refreshed mind for afternoon',
+  'Close laptop at exactly 12:00, heat lunch, eat mindfully, walk, meditate, return by 12:30',
+  'Full afternoon performance, sustained energy, no post-lunch cognitive crash',
+  ['Hard stop at 12:00 — set phone alarm the previous day','Retrieve pre-packed lunch from bag','Heat food without checking phone','Eat at a table or outdoor area — NOT at your desk','Walk 10 min after eating — outdoors preferred','5-min box breathing at walk\'s end','Return to desk at 12:30 — reset for afternoon'],
+  '30 min','🟡 Medium-High',['Microbreak','Cognitive Restoration']);
+
+def('dhuhr_asr_maghrib','','Dhuhr, Asr & Maghrib on time','Work Execution',
+  'Maintaining on-time prayers during work hours is the single strongest predictor of Muslim professionals\' work satisfaction and life meaning (King Saud University). Praying on time in a hospital environment is an act of professional integrity.',
+  'Prayer time enters — phone notification or Adhan heard',
+  'Allah\'s pleasure, spiritual continuity across the workday',
+  'Stop immediately, make Wudu, find prayer space, pray at the beginning of time',
+  'Three pillars of the day fulfilled, divine connection maintained',
+  ['Set prayer time notifications on Adhan app','Keep a small prayer rug in desk drawer or bag','Wudu at hospital ablution area — 3 min max','Pray Dhuhr: 4 Sunnah + 4 Fard + 2 Sunnah','Pray Asr on time — Jama\'ah preferred','Pray Maghrib immediately at sunset — 3 Rak\'ahs, no delay','Brief gratitude after each prayer: one specific blessing from today'],
+  '15 min ×3','🌙 Sacred',['Five Pillars','Salah','Islamic Practice']);
+
+def('eod_prep','','End of day preparation','Work Execution',
+  'Unfinished tasks persist in working memory until explicitly noted (Zeigarnik Effect). The EOD prep externalises all open loops, clears cognitive space for the commute and evening, and gives tomorrow-Ahmed a clear starting point.',
+  'End of work hours approaching — 30 min before departure',
+  'Complete closure of the professional day and mental freedom for the commute',
+  'Open notebook, process open tasks, set tomorrow\'s MIT, declare "shutdown complete"',
+  'No work thoughts intruding on the commute or evening — present father awaits',
+  ['Review today\'s to-do list — tick completed, carry forward uncompleted','Write tomorrow\'s top 3 priorities now — while context is fresh','Reply to any critical message needing end-of-day response','Clear physical desk: papers stacked, notes filed, chair pushed in','Close all laptop tabs and apps','Whisper or write: "Shutdown complete"','Lock workspace — signal to brain that professional mode is complete'],
+  '15 min','🟠 High',['Shutdown Ritual','Zeigarnik Effect','Work-Life Boundary']);
+
+def('evening_azkar','','Evening Azkar (Masaa Azkar)','Evening Transit',
+  'The Masaa Azkar shift focus from the day\'s stresses to gratitude and divine trust. Transitioning from threat-focused to value-based framing during commutes improves emotional wellbeing by 28% (Gross & John, 2003).',
+  'Boarded transit home — work is behind, home is ahead',
+  'Emotional decompression, gratitude, and spiritual closure of the workday',
+  'Open Azkar app, recite Masaa Azkar with meaning — lips moving, heart present',
+  'Peaceful mind, lowered stress, arriving home as a husband and father',
+  ['Board transit and settle — 60-second grounding first','Phone on silent','Recite each with slow deliberate lips — meaning matters more than speed','After Masaa Azkar: du\'aa for the evening, Mohamed\'s day, Naira\'s tiredness','If exhausted: 5 focused Azkar beats 20 mechanical ones','Close eyes for 2 minutes of grateful stillness after'],
+  '10–15 min','🌙 Sacred',['Evening Azkar','Masaa','Decompression'],MASAA);
+
+def('evening_podcast','','Podcast or audiobook','Evening Transit',
+  'Narrative content reduces stress by 68% within 6 minutes (University of Sussex). Evening listening is restorative engagement, not information loading — creating emotional buffer between the workshop floor and home.',
+  'Evening Azkar complete — commute time remains',
+  'Mental release from work tension, transition into home and husband mode',
+  'Choose a non-work episode — narrative, inspirational, or simply enjoyable',
+  'Arriving home lighter, warmer, more present — the family gets the better Ahmed',
+  ['Pre-downloaded to avoid buffering','Choose narrative or light content — NOT work-adjacent topics evening','Volume at 60–70%','If the day was hard: Arabic devotional content or nature soundscapes','At the last stop: note one thing you are genuinely glad about today','Remove earphones before entering home — enter without media'],
+  '15–20 min','🟢 Medium',['Decompression','Evening Transition']);
+
+def('evening_call','','Call one family member or friend','Evening Transit',
+  'Strong social relationships improve survival odds by 50% (Holt-Lunstad, BYU, 2015). A genuine 7-minute call maintains the relational threads that give Ahmed\'s life richness outside his nuclear family.',
+  'Evening Azkar and podcast window complete — final transit stretch',
+  'Connected community, maintained friendships, warmth',
+  'Call one person — make it genuine, not transactional',
+  'Relationship maintained, friend or family member feels seen',
+  ['Rotate through: Omer, Bardes, Sama, friends, cousins','Open with genuine purpose: "I was thinking about you"','Ask one specific question about their life','Share something real from your day','Keep it 7–12 minutes','If no answer: leave a warm voice note','Track rotation — deliberate prevents neglect'],
+  '7–12 min','🟠 High',['Social Connection','Friendship','Family']);
+
+def('calm_music','','Calm music & mindful breathing','Evening Transit',
+  'Instrumental music at 60–80 bpm reduces heart rate variability markers of stress within 3 minutes (Journal of Advanced Nursing). Arriving home with a regulated nervous system is a form of love for Naira and Mohamed.',
+  'Transit approaching home station — final winddown',
+  'Complete nervous system reset before entering the home',
+  'Slow instrumental music, nose breathing, eyes soft — full decompression',
+  'Walking through the door as present, warm, regulated Ahmed',
+  ['Curate a specific playlist: no lyrics, 60–80 bpm, Arabic maqam / oud / lo-fi','Volume low — background for breathing, not foreground','Breathe through nose: 4 count in, 6 count out — longer exhale activates vagus','Feel shoulders drop — soften the jaw, unclench the hands','30 sec before stop: remove earphones','Arrive: stand at door for 5 seconds before entering — final reset'],
+  '10 min','🟢 Medium',['Music Therapy','Home Transition']);
+
+// ── OPTION A EVENING
+def('aw_a_car','','Retrieve car, drive to gym','After Work — Option A: Gym/Tennis',
+  '"Temptation bundling" — linking an enjoyable activity to a difficult transition — increases follow-through by 51% (Milkman, Wharton). Drive direct, music on, gym bag already in the car.',
+  'Work done — car keys in hand, gym bag pre-packed',
+  'Athletic identity activation and physical release of accumulated professional stress',
+  'Drive directly — music or podcast on immediately, no detour',
+  'Gym parking spot, workout gear on, training mode activated',
+  ['Gym bag packed and in car the night before','Drive direct — no "I\'ll just quickly..." stops','Energising music or podcast for gym-mode activation','Text Naira: "At gym. Done by [time]."'],
+  '15–20 min drive','🟠 High',['Temptation Bundling','Athletic Identity']);
+
+def('aw_a_workout','️','Full workout — gym or tennis','After Work — Option A: Gym/Tennis',
+  '3× per week achieves 150 min/week of moderate-to-vigorous exercise, reducing all-cause mortality by 31% (JAMA). The workout is Ahmed\'s most reliable personal sovereignty window — time that belongs to him.',
+  'Arrived at gym or court — warm-up beginning',
+  'Physical mastery, stress release, and the endorphin that reshapes the entire evening',
+  'Follow the planned workout — no phone scrolling, full presence in each set',
+  'Post-workout physical pride, clear mind, and earned relaxation for the family evening',
+  ['Follow pre-planned program — not improvised','Warm up 5–7 min: dynamic stretching, light cardio','Compound movements first if lifting: squat, press, deadlift','Tennis: pre-agreed session or solo wall practice','Hydrate every 20 min: 250–300ml','Cool down 5 min','Log the workout: sets/reps or session type'],
+  '45–60 min','🔴 Critical',['Physical Fitness','Resistance Training','Tennis','Longevity']);
+
+def('aw_a_shower','','Post-workout shower','After Work — Option A: Gym/Tennis',
+  'Post-exercise showering removes lactic acid metabolites and serves as a transition ritual from athlete-mode to husband-and-father-mode. Arriving home clean and smelling good is a form of respect for Naira.',
+  'Workout complete — body warm, sweating, endorphins flowing',
+  'Cleanliness, refreshed state, transition from athlete to family man',
+  'Shower immediately — gym shower is valid, home shower if facility is poor',
+  'Clean, fresh-smelling Ahmed arrives home — Naira and Mohamed greet him warmly',
+  ['Gym bag contains travel toiletries','Quick but complete: 5–7 min max','Cold rinse last 20 sec — reduces inflammation','Change into fresh casual clothes from gym bag','Apply a light fragrance — this signals "home mode" Ahmed','Text Naira: "On my way. Home in [X] minutes."'],
+  '5–7 min','🟡 Medium-High',['Post-Workout Recovery','State Transition']);
+
+def('aw_a_isha','','Pray Isha on time','After Work — Option A: Gym/Tennis',
+  'Isha is the fifth and final pillar prayer of the day — delaying it leaves the day architecturally incomplete. Prayed before sleep it directly improves sleep quality and reduces night-time anxiety.',
+  'Home arrived after gym — Isha time has entered or is approaching',
+  'Day completed in divine obedience — five prayers upheld, covenant honoured',
+  'Wudu, mosque if possible, otherwise prayer space at home',
+  'Spiritual closure of the day, clear conscience, ease of sleeping with Isha complete',
+  ['Check Isha time on Adhan app before leaving gym','Mosque near home even 2–3 times/week builds community anchor','4 Sunnah before + 4 Fard + 2 Sunnah + Witr (3 Rak\'ahs min)','Witr is Sunnah Mu\'akkadah — Prophet ﷺ never missed it','Post-Isha: 3 min of quiet gratitude','Do not pick up phone immediately after Isha'],
+  '15 min','🌙 Sacred',['Isha Prayer','Witr','Five Pillars']);
+
+def('aw_a_dinner','️','Family Dinner','After Work — Option A: Gym/Tennis',
+  'Teenagers who eat dinner with family 5+ times/week are 40% less likely to experience mental health issues — and the effect begins in infancy (Columbia University). Screen-free family dinners build the ritual that sustains Mohamed across childhood.',
+  'Isha prayed — dinner is on the table or ready',
+  'Family warmth, Naira\'s presence, Mohamed\'s laughter, and the taste of home',
+  'Set table together with Naira — phones in kitchen, Bismillah, eat together',
+  'Nourished family bonds, satisfied couple, Mohamed knows dinner is sacred',
+  ['Phones on charge in kitchen before sitting','Help set the table — this is partnership, not Naira\'s job','Say Bismillah together','Start with: "Best moment of your day?" — then listen fully','Eat slowly — no rushing to "get the evening done"','Mohamed at the table in high chair or lap','Post-dinner: offer to wash up'],
+  '30–40 min','🔴 Critical',['Family Rituals','Screen-Free','Marriage']);
+
+def('aw_a_family','','Quality family time','After Work — Option A: Gym/Tennis',
+  'Presence matters less than attunement — the degree to which you are emotionally tuned to the other person\'s state (Gottman). For Mohamed, floor-time with Baba provides paternal attachment security that protects children across their entire lifespan.',
+  'Dinner cleared — the evening belongs to the family until sleep routine',
+  'Deep warmth, presence, laughter with Mohamed, and intimacy with Naira',
+  'Get on the floor with Mohamed — child-led play; then Naira-led conversation',
+  'Mohamed\'s trust and joy, Naira\'s contentment, Ahmed\'s profound sense of rightness',
+  ['Phone in another room or face-down on charge','Get on the floor with Mohamed — blocks, books, following his attention','Make eye contact with him at his level','After Mohamed\'s bedtime: dedicated Naira time — no phones, full attention','Ask Naira one real question about something on her mind','Physical closeness: sit beside each other','If tired: "I\'m tired but I\'m here with you."'],
+  '1–1.5 hours','🔴 Critical',['Quality Time','Child Development','Marriage']);
+
+// ── OPTION B EVENING
+def('aw_b_home_early','','Head home','After Work — Option B: Family Day',
+  'Leaders who leave work on time create teams that are 21% more productive (BCG). For Ahmed, heading home early sends a powerful message: family is not what\'s left after work. It is primary.',
+  'Work EOD prep complete — Option B evening: family day priority',
+  'More time with Mohamed and Naira than a gym evening allows',
+  'Leave work on time — do not negotiate with "just one more thing"',
+  'Extended family evening, present father, wife who sees her husband choose them',
+  ['EOD prep done — desk cleared, shutdown ritual complete','Inform team: "I\'m heading off — see you tomorrow."','Do not check work email after leaving the building','Transit home with decompression: Azkar then music','Text Naira 15 min before arrival'],
+  '15 min earlier','🔴 Critical',['Values-Based Leadership','Family Priority']);
+
+def('aw_b_light_dinner','','Family Dinner','After Work — Option B: Family Day',
+  'On Family Day, dinner is intentionally lighter — easier to prepare, more energy for the walk and quality time. Bismillah together and phones in kitchen transform a meal from fuelling to bonding.',
+  'Home arrived — kitchen ready, dinner simple and pre-planned',
+  'Family nourishment with maximum presence and minimum preparation stress',
+  'Simple meal quickly, phones banished, Bismillah said together',
+  'Energy for the walk, the play, and the couple time that follows',
+  ['Option B dinner pre-planned night before (lighter: salad + protein, soup + bread)','Help prepare if home before Naira','Phones in kitchen before sitting — hard rule','Bismillah together','One question: "What are we grateful for from today?"','Keep dinner to 20–25 min'],
+  '20–25 min','🟠 High',['Family Dinner','Screen-Free']);
+
+def('aw_b_walk','','Family Evening walk','After Work — Option B: Family Day',
+  'Walking reduces rumination by 45% (Stanford). Walking with Mohamed activates bilateral stimulation — the same mechanism used in EMDR therapy. Mohamed\'s sensory world expands on each walk: every cat, puddle, and bird is a development moment.',
+  'Dinner done — Mohamed\'s energy is high, evening is warm, shoes at the door',
+  'Fresh air, movement, conversation, and Mohamed\'s engagement with the world',
+  'Family walks out together — Mohamed\'s pace, Mohamed\'s direction',
+  'Stimulated child, bonded couple, and the natural decompression of evening air',
+  ['Pre-pick route the evening before','Mohamed\'s pace and curiosity leads','Name what he sees in Arabic and English: "قطة — that\'s a cat"','Walk beside Naira, not ahead — this is togetherness, not exercise','Hold her hand when possible','Return when Mohamed signals tiredness, not by a clock'],
+  '20–30 min','🟠 High',['Evening Walk','Child Development','Marriage']);
+
+def('aw_b_help_wife','','Help wife with practical tasks','After Work — Option B: Family Day',
+  'Couples who share domestic labour rate their relationships 20% more satisfied (Council on Contemporary Families). For Ahmed, helping without being asked communicates "I see what you carry" — without words.',
+  'Evening walk complete — practical evening tasks visible',
+  'Naira\'s relief, her appreciation, and the partnership energy that follows shared labour',
+  'Scan the household — what needs doing? Do it before she asks.',
+  'Naira\'s felt care, reduced mental load, deeper evening connection',
+  ['Identify without prompting: dishes, laundry, Mohamed\'s bath, next-day bag prep','Do not say "tell me what to do" — observe and act','Mohamed\'s bath: run it, bathe him, dry him, dress him — full ownership','Kitchen: wipe surfaces, dishwasher, take out trash','Prepare Mohamed\'s nursery bag for tomorrow','When done: no announcement — just love in action'],
+  '20–30 min','🔴 Critical',['Partnership','Gottman Method','Domestic Labour']);
+
+def('aw_b_quality_time','️','Family Quality time','After Work — Option B: Family Day',
+  'Children aged 0–3 need approximately 4 hours of engaged parental interaction daily for optimal attachment and language development (Child Development Perspectives). On Family Day, Ahmed makes direct deposits into both Mohamed\'s developmental account and Naira\'s relational account.',
+  'Practical tasks complete — evening opened for pure family presence',
+  'Deep joy in Mohamed\'s world and genuine intimacy with Naira',
+  'Get on the floor, follow Mohamed\'s lead; couple time after bedtime',
+  'Mohamed\'s laughter and trust, Naira\'s happiness, family fullness',
+  ['Phone in another room','Get onto floor at Mohamed\'s level — height is relationship','Follow his exact attention: whatever he picks up, you investigate too','Narrate what he\'s doing: "You\'re building a tower — so tall!"','After Mohamed\'s bedtime: transition to couple time immediately','Couple time: conversation, physical closeness, no phones'],
+  '1.5–2 hours','🔴 Critical',['Child Development','Attachment Theory','Quality Time']);
+
+def('aw_b_isha','','Pray Isha together','After Work — Option B: Family Day',
+  'Couples who share spiritual practices show 32% higher relationship satisfaction. For Ahmed and Naira, a shared Isha creates divine partnership — not just a couple, but a household with a shared covenant.',
+  'Isha time entered — family gathered at home',
+  'Divine partnership with Naira, complete family Isha, spiritual closure together',
+  'Ahmed leads Isha — Naira and Mohamed present',
+  'Spiritually bonded couple, Isha complete on time, household centred on God',
+  ['Isha time confirmed on app','Make Wudu together or sequentially','Ahmed leads: 4 Fard Rak\'ahs, 2 Sunnah, Witr','Naira follows — Mohamed in sight on play mat nearby','After Salaam: stay seated 2 min in joint gratitude','Du\'aa together holding hands if you wish','Tuck Mohamed in together — both present for his bedtime'],
+  '20 min','🌙 Sacred',['Family Prayer','Couples Spirituality','Islamic Family Life']);
+
+def('aw_b_winddown','','Couple wind-down','After Work — Option B: Family Day',
+  'The last 20 minutes before sleep are disproportionately impactful on relationship quality (Gottman Institute). This window is for warmth, not problem-solving. For Ahmed and Naira, the wind-down is where the marriage is renewed daily.',
+  'Mohamed asleep, Isha complete — the evening belongs to the couple',
+  'Intimacy, warmth, laughter, and the feeling of being truly known by your partner',
+  'Sit beside Naira — no phones, no TV agenda — just warm presence and real conversation',
+  'Sleeping with warmth in the marriage, Naira feeling loved, Ahmed feeling anchored',
+  ['Phones on charge in kitchen — sacred couple territory','Brew tea or warm drink together','Ask: "What\'s on your mind?" — then listen without fixing','Share something real from your day not yet mentioned','Physical closeness: sit side by side, hold hands','Discuss tomorrow lightly — just syncing, not planning','Close with: "Thank you for today." — eye contact, genuine'],
+  '30–45 min','🔴 Critical',['Marriage','Couple Wind-Down','Intimacy']);
+
+// ── NIGHT CLOSURE
+def('night_prep','','Prepare lunch & Breakfast for next day','Night Closure',
+  'Night-before meal prep removes 2–3 decisions from the next morning\'s cognitive load window. Research identifies "habit stacking" as the most reliable mechanism: nightly prep follows naturally from dinner cleanup.',
+  'Family dinner cleared — kitchen is the stage for tomorrow\'s preparation',
+  'Tomorrow-morning ease, healthy work lunch, satisfaction of a prepared household',
+  'Portion tomorrow\'s lunch, prepare fast breakfast',
+  '10 minutes tonight = 30 minutes of advantage tomorrow morning',
+  ['Pack lunch: protein + complex carb + vegetable','Portion into container that fits in the dedicated lunch bag','Prepare fast breakfast: overnight oats, pre-boiled eggs, or fruit pre-cut','Refill water bottle and place in bag','Wipe kitchen surfaces','Set out all bags at the door: gym/work/nursery'],
+  '10 min','🟠 High',['Meal Prep','Habit Stacking','Morning Optimisation']);
+
+def('body_face_night','','Body & face night routine','Night Closure',
+  'While you sleep, skin enters a repair mode driven by growth hormone release. Applying night products during this window exploits the skin\'s natural repair cycle. For Ahmed in the Egyptian climate, consistent night moisturising prevents accelerated aging.',
+  'Kitchen closed — moving to bathroom for final night preparation',
+  'Nourished skin overnight and a sensory ritual that signals sleep is near',
+  'Face wash → night moisturiser → body lotion → teeth → mirror moment with appreciation',
+  'Skin health long-term, ritual completion, confident face tomorrow morning',
+  ['Gentle face wash','Pat dry — do not rub (collagen preservation)','Night moisturiser or night cream — heavier than morning is correct','Body lotion to dry areas','2-minute teeth brush — second brush of the day','Look in the mirror for 10 seconds with appreciation, not criticism','Whisper Bismillah — the night routine is complete'],
+  '5 min','🟡 Medium-High',['Night Skincare','Sleep Rituals','Self-Care']);
+
+def('mood_review','','Mood & day review','Night Closure',
+  'Dr. Seligman\'s PERMA model identifies achievement recognition and gratitude as the two highest-impact daily practices for wellbeing. The 5-role scoring (Father | Husband | Professional | Muslim | Son) gives Ahmed a brief but powerful life dashboard.',
+  'Night routine complete — 5 min before sleep, notebook open',
+  'Self-understanding, intentional growth, the peace of honest daily reckoning',
+  '1 win → 1 challenge → role scores 1–10 → gratitude → tomorrow\'s intention',
+  'Sleep with clear conscience, growth awareness, tomorrow already oriented',
+  ['1 genuine win — specific, not "I survived"','1 real challenge — what happened, what you feel, what you\'ll do differently','Role scores 1–10: Father | Husband | Professional | Muslim | Son','3 gratitude items — named specifically (not "my family" → "Mohamed\'s laugh when I got on the floor")','Tomorrow\'s intention: one word — "patient" / "focused" / "present"','Close notebook — do not re-read tonight. Sleep on it.'],
+  '5 min','🟠 High',['Journalling','PERMA','Gratitude','Self-Awareness']);
+
+def('night_azkar','','Azkar before sleep (Night Azkar)','Night Closure',
+  'Religious ritual before bed reduces sleep onset time by 19% and improves sleep architecture in practising believers. The Night Azkar transfer the night\'s safety from one\'s own vigilance to divine care — enabling the complete surrender that deep sleep requires.',
+  'In bed, positioned on right side — phone is in kitchen',
+  'Divine protection through the night, peace of soul',
+  'Recite Night Azkar with slow, intentional lips',
+  'Sleep with the angels\' witness, the night held by Allah, body releasing into full rest',
+  ['Phone already in kitchen — no bedside device','Lie on right side — sunnah sleeping position','Blow into cupped hands after Al-Ikhlas, Al-Falaq, An-Nas (×3 each) — wipe over body','Recite Ayat al-Kursi — understand it as a shield over your household','Tasbeeh: 33× Subhanallah, 33× Alhamdulillah, 34× Allahu Akbar on fingers','Du\'aa for Mohamed\'s night, Naira\'s rest, your parents','Close with Bismika Allahumma amutu wa ahya — surrender to sleep'],
+  '5–7 min','🌙 Sacred',['Night Azkar','Sleep Ritual','Spiritual Protection'],NIGHT_AZK);
+
+def('sleep_midnight','','Sleep before midnight','Night Closure',
+  'Each hour of sleep before midnight has 2× the restorative value due to higher proportion of deep (N3) slow-wave sleep (Walker, UC Berkeley). For Ahmed waking at 06:00, sleeping by 23:30 achieves the minimum deep sleep required for cognitive performance and emotional regulation.',
+  'Azkar complete, body relaxed, room prepared',
+  'Restorative sleep and a 06:00 Ahmed who is ready for Mohamed\'s morning',
+  'Screens off, bedroom 18–20°C, right side, eyes closed — sleep is the priority',
+  '06:00 wake with genuine energy, mental sharpness, full capacity for all roles',
+  ['Screens off at 22:30 — blue light suppresses melatonin for 2 hours','Bedroom temperature 18–20°C — body temperature must drop to initiate sleep','Blackout curtains or sleep mask — darkness triggers melatonin','White noise or silence only','Lie on right side (sunnah)','If mind races: 4-7-8 breathing (4 in, 7 hold, 8 out)','Alarm set for 06:00 — distinct tone, backup if needed'],
+  'Before midnight','🔴 Critical',['Sleep Science','Deep Sleep','Matthew Walker','Recovery']);
+
+// ── THURSDAY EVENING
+def('thu_grocery','','Grocery shopping run','Thursday Evening',
+  'Shoppers with pre-written lists purchase 25% less processed food and stay 30% under budget (Wansink, Cornell). Shopping Thursday evening rather than crowded Friday morning is a logistical gift to the weekend.',
+  'Thursday end of workday — grocery list on phone',
+  'Stocked home, weekend meal security, satisfaction of a prepared household',
+  'Single-store run with pre-written list — deliberate, efficient, 30–40 min max',
+  'Fridge full for the weekend, Naira relieved, the weekend free from shopping',
+  ['Grocery list prepared Thursday morning during to-do list time','Check fridge and pantry before leaving work','Single store visit — efficiency over choice paralysis','Stick to the list — one treat item allowed','Buy family snack tray items for Thursday dinner','Text Naira estimated return time'],
+  '30–40 min','🟡 Medium-High',['Meal Planning','Weekly Preparation']);
+
+def('thu_essentials','','Prepare evening essentials','Thursday Evening',
+  'Deliberate weekly rituals of connection are among the strongest predictors of long-term relationship satisfaction (Gottman Institute). The "essentials preparation" communicates intentionality: "I planned this for us."',
+  'Groceries put away — home environment needs transforming for the evening',
+  'An evening that feels deliberately designed for Naira, not defaulted into',
+  'Dim lights, sweets tray out, phone on silent — set the environment before she notices',
+  'Naira\'s smile when she realises you prepared this for her — that moment is the reward',
+  ['Dim or switch off main overhead lights — use lamps or fairy lights','Put out a sweets tray: dates, chocolates, or whatever Naira loves most','Place a candle if you have one','Both phones on silent — explicitly agreed with Naira','Prepare drinks: tea, latte, or her favourite drink','Tidy the living room quickly','Set an intention: "Tonight is for Naira and for us."'],
+  '10–15 min','🔴 Critical',['Marriage Investment','Thursday Ritual','Intentional Romance']);
+
+def('thu_dinner','️','Special Dinner','Thursday Evening',
+  'Shared cooking activates social reward pathways similar to music-making and dance (University of Oxford). Cooking together on Thursday is shoulder-to-shoulder collaboration and the implicit communication: "I want to spend time with you."',
+  'Environment set — now the evening\'s centrepiece begins',
+  'A shared experience that creates a new Thursday memory',
+  'Cook together or eat out — keep the atmosphere intimate and screen-free',
+  'Shared laughter, genuine conversation, the bond of doing something together',
+  ['If cooking: pick a recipe Ahmed can lead or contribute meaningfully','Divide tasks naturally — work from the same recipe','Talk while cooking: memories, dreams, observations — anything but logistics','If eating out: one restaurant pre-chosen (avoid decision fatigue on the night)','Table set before sitting — small detail, large atmosphere impact','Bismillah together — sunnah and a beautiful couple ritual','Stay at the table after eating: conversation, not screens'],
+  '45–60 min','🔴 Critical',['Couple Bonding','Thursday Ritual','Shared Experience']);
+
+def('thu_movie','','Movie Night','Thursday Evening',
+  'Couples who regularly watched films together and discussed them afterward showed relationship maintenance equivalent to couples therapy exercises (University of Rochester). The discussion is the key variable.',
+  'Dinner done, kitchen tidied — time to relax together on the sofa',
+  'Entertainment together, laughter or tears shared, cosy intimacy',
+  'Film chosen in advance — sit close, watch fully together',
+  'Shared experience, conversation starter, warmth of being side by side',
+  ['Film pre-chosen Thursday morning — avoid "what should we watch?" debate','Sit close together on the sofa — physical proximity during viewing matters','Both phones on charge in kitchen for the duration','Blanket, drinks, and snacks prepared before pressing play','Watch fully — no half-attention scrolling','After film: 10-min discussion — "What affected you most?"','Don\'t go straight to sleep — let the conversation breathe'],
+  '2 hours','🟡 Medium-High',['Couple Bonding','Thursday Ritual','Shared Entertainment']);
+
+def('thu_wife','','Spend night with wife','Thursday Evening',
+  'Marital intimacy is described in the Quran as a garment between spouses (2:187). Couples who maintain regular physical intimacy report 40% higher relationship satisfaction and 22% lower stress hormones.',
+  'Film complete, environment warm, Mohamed asleep',
+  'Genuine intimacy, physical closeness, emotional depth, and the sacred couple bond',
+  'Full presence — no phones, no distractions, full attention to each other',
+  'Renewed marital bond, Naira feeling deeply cherished, Ahmed waking Friday with a full heart',
+  ['Mohamed confirmed asleep before the night begins','All screens and phones in kitchen — non-negotiable','Begin with real conversation: "What are you feeling?"','Physical intimacy that honours Naira\'s needs and energy — not Ahmed\'s agenda only','Ghusl afterward if applicable','Fall asleep together if possible','Morning after: warm greeting, no rush'],
+  'Evening','🌙 Sacred',['Marriage','Intimacy','Couple Bond','Islamic Relationship']);
+
+// ── FRIDAY
+def('fri_fajr','','Wake for Fajr','Pre-Dawn Anchor',
+  'Friday Fajr carries a specific spiritual distinction: the most virtuous prayer on the most virtuous day. Rising for Friday Fajr after a special Thursday night sets a powerful contrast: intimacy and divine worship bookending the transition to the blessed day.',
+  'Friday Fajr alarm — softer tone, pre-set Thursday night',
+  'Allah\'s nearness on the most blessed day, spiritual elevation, angels\' witness at Fajr',
+  'Rise with intention — this is Fajr on a Friday',
+  'Spiritual altitude for the day, divine grace at the seam of night and dawn',
+  ['Set a gentle alarm — not the harsh workday tone','Rise with Bismillah — Friday Fajr is worth the effort even after a late Thursday','Do not check phone — go directly to Wudu','Walk to mosque if local congregation exists','After Fajr: stay in prayer space for 10–15 min of quiet dhikr'],
+  '5 min + prayer','🌙 Sacred',['Friday Fajr','Sacred Day','Pre-Dawn Prayer']);
+
+def('fri_return_sleep','','Return to sleep','Pre-Dawn Anchor',
+  'The post-Fajr return-to-sleep provides a higher proportion of REM sleep, which processes emotional memories and supports creativity (Walker). This produces a more energised, emotionally regulated person for the family-heavy Friday ahead.',
+  'Home from mosque — body warm from prayer, pre-dawn fatigue present',
+  'Deep rest before a full, rich Friday of bike, mindfulness, Jumuah, and family',
+  'Return to bed gently, soft light remains, gentle alarm set for 08:30',
+  'REM-rich second sleep, emotionally restored, awakened gently for a beautiful Friday',
+  ['Return from mosque directly to bedroom — no phone or screens','Gentle alarm set for 08:30','Soft morning light allowed — partial curtain, not blackout','Lie down without phone — the Azkar from mosque carry into this half-awake state','Wake at 08:30 with gentle alarm','First thing: whisper Alhamdulillah'],
+  'Until 08:30','🟡 Medium-High',['Polyphasic Sleep','REM Sleep','Friday Recovery']);
+
+def('fri_water_300','','Drink Water','Morning Reset',
+  'The 300ml accounts for the mosque walk\'s mild exertion and the bike ride following within 60 minutes. The Friday morning water initiates the daily 2L goal and activates the circadian clock alongside morning light exposure.',
+  '08:30 alarm — gentle waking, body still warm from sleep',
+  'Hydrated readiness for the morning bike ride and the full Friday ahead',
+  'Pre-placed 300ml water glass — drink immediately upon rising',
+  'Alert, hydrated body ready for movement and Friday morning',
+  ['Pre-placed water glass Thursday night on bedside table','Drink the full 300ml within 3 min of waking — before coffee','Room temperature or slightly cool','Refill and leave in kitchen for the morning'],
+  '2 min','🟠 High',['Morning Hydration','Friday Routine']);
+
+def('fri_sports_outfit','','Wear sports outfit','Morning Reset',
+  'Implementation intentions increase habit follow-through by 91% (Gollwitzer, 1999). The pre-placed sports outfit eliminates the "should I exercise?" decision. The outfit IS the cue: wearing it means you\'re going for a ride.',
+  'Water drunk — sports outfit visible exactly where placed the night before',
+  'Physical readiness, athletic identity, anticipation of the morning bike ride',
+  'Put on the pre-placed outfit without deliberation — shoes and all',
+  'Dressed for movement, body signalling activity-mode, Friday beginning with intention',
+  ['Sports outfit pre-placed Thursday night — shirt, shorts/tights, socks on a chair','Shoes placed at the door Thursday night','Put on the full outfit including shoes — this commits the body','No checking phone before getting dressed','Light stretching begins immediately after dressing'],
+  '2 min','🟡 Medium-High',['Implementation Intentions','Athletic Identity']);
+
+def('fri_stretching','','Full body stretching','Morning Reset',
+  'Targeted dynamic stretching before cycling reduces injury risk by 34% and improves range of motion within the ride (American Council on Exercise). The sequence is also a mindfulness practice — slow attention to each body part.',
+  'Sports outfit on — body now signalling movement; stretching immediately follows',
+  'Flexible, injury-free movement on the bike and a body that feels alive on Friday morning',
+  '8-pose sequence held for 30–60 seconds each — slow and deliberate, no rushing',
+  'Limber body, reduced injury risk, mind-body connection that elevates the entire bike ride',
+  ['Mountain Pose — 30 sec: stand tall, breathe, feel the full length of your spine','Forward Fold — 45 sec: hinge at hips, head hang heavy','Chest Opener — 30 sec: arms behind back, chest forward and up','Hip Flexor Lunge — 30 sec each side','Spinal Twist — 30 sec each side: seated, arm across body, look behind','Cat-Cow — 60 sec: on all fours, arch and round the spine','Child\'s Pose — 60 sec: hips to heels, arms forward, forehead to floor','Neck Rolls — 30 sec: slow circular rolls both directions'],
+  '5 min','🟡 Medium-High',['Dynamic Stretching','Injury Prevention','Somatic Awareness']);
+
+def('fri_bike','','Outdoors Bike ride outdoors','Active Sunrise',
+  'Nature exposure reduces stress hormones by 21% and improves creative thinking for 4 hours afterward (University of Michigan). The no-earphones rule removes a barrier between Ahmed and the sensory richness of the Banha morning — this is ecological medicine.',
+  'Out the door — bike unlocked, sports outfit on, water bottle attached',
+  'The feeling of movement through morning air, the Banha landscape at its most beautiful',
+  'Mount the bike, no earphones, ride with full sensory presence — no destination pressure',
+  'Endorphins, BDNF spike, ecological stress-reduction, and the incomparable feeling of a free Friday',
+  ['Pre-planned route: toward Corniche or any green/waterfront area in Banha','No earphones — the non-negotiable element of the Friday ride','Ride at comfortable pace — 65–75% HR, conversation pace','Actively notice: colours, air temperature, sounds','No phone on handlebars — phone in pocket or bag','At resting points: stop, look, breathe — do not just keep moving','Return home feeling expanded, not depleted'],
+  '15–20 min','🟠 High',['Nature Medicine','Aerobic Exercise','Sensory Presence','BDNF']);
+
+def('fri_sit_sea','','Sit facing sea or calm environment','Mindful Time',
+  '"Blue Mind" (Wallace J. Nichols) describes the meditative state triggered by proximity to water. Waterfronts reduce the brain\'s default mode network activity and the self-referential rumination associated with stress and anxiety.',
+  'Arrived at the Corniche — bike locked, phone in pocket',
+  'The Blue Mind state: cognitive quiet, sensory expansion, the peace only water provides',
+  'Sit facing the water — phone away, eyes open and soft, nothing to do',
+  'Profound calm, creative insights arising spontaneously, the soul restored by something ancient',
+  ['Find your preferred spot — return to it regularly','Sit rather than stand — lowered posture signals safety to the nervous system','Face the water directly','Phone in pocket, face down — resist the urge to photograph first','Eyes open and soft — not focused, panoramic peripheral vision','Allow all sounds: water, birds, traffic, wind — all welcome','Remain at least 5 min before beginning Adhkar — let the water work first'],
+  '5–10 min','🟠 High',['Blue Mind','Wallace Nichols','Mindfulness','Nile Corniche']);
+
+def('fri_adhkar','','Morning Adhkar (Sabah Azkar)','Mindful Time',
+  'Reciting spiritual texts in evocative environments deepens semantic encoding through context-dependent memory. The Sabah Azkar at the Corniche — in the full sensory richness of Friday morning — is qualitatively different from transit Azkar.',
+  'Sitting at the waterfront, Blue Mind state initiated — transition to Sabah Azkar',
+  'The most alive, meaning-saturated recitation of the week',
+  'Recite each dhikr slowly, eyes sometimes closed, meaning felt in the body',
+  'Profound spiritual connection, divine nearness, the week\'s most impactful Azkar session',
+  ['Begin with Bismillah and Niyyah for morning Azkar','Recite from memory or app — look up and breathe between each dhikr','After each dhikr: pause 3–5 seconds to feel its meaning','Close eyes for the du\'aa portion','Make a specific du\'aa for Ahmed\'s Friday: Mohamed\'s day, Naira\'s wellbeing','After Azkar: remain in silent gratitude for 60 seconds'],
+  '10–15 min','🌙 Sacred',['Sabah Azkar','Mindful Recitation','Spiritual Depth'],SABAH);
+
+def('fri_kahf','','Read Surah Al-Kahf','Mindful Time',
+  'Surah Al-Kahf is specifically prescribed for Friday recitation in multiple Hadiths — the Prophet ﷺ described a light between two Fridays for the person who reads it. The surah\'s four stories are a complete framework for Ahmed\'s life as professional, father, husband, and believer.',
+  'Azkar complete — the most sacred reading practice of the week begins',
+  'The light between two Fridays, protection from Dajjal\'s fitnah, and Quranic wisdom for the week',
+  'Open Al-Kahf at the beginning, read all 110 verses with reflection — not speed',
+  'Sunnah fulfilled, spiritual light for the coming week, four stories to guide Ahmed\'s decisions',
+  ['Open Al-Kahf from the beginning','Read with tajweed — lips moving, voice soft if outdoors','At each of the four stories: pause and ask "What does this mean for my life right now?"','Story 1 (Companions of Cave): Where am I holding faith under pressure?','Story 2 (Moses & Khidr): Where am I resisting divine wisdom I don\'t yet understand?','Story 3 (Two Gardens): Am I grateful or is wealth making me forgetful?','After verse 110: make du\'aa'],
+  '20–30 min','🌙 Sacred',['Surah Al-Kahf','Friday Sunnah','Quranic Reflection']);
+
+def('fri_mindful_obs','️','Open Monitorin -(Meditation)','Mindful Time',
+  '"Open Monitoring" meditation (Richard Davidson, University of Wisconsin) involves attending to whatever arises in consciousness without directing attention. This practice specifically improves emotional regulation and reduces amygdala reactivity to workplace stress.',
+  'Surah Al-Kahf completed — transition from reading to pure presence',
+  'The deepest reset of the week — complete cognitive stillness in a beautiful environment',
+  'Set a silent timer for 5–7 min, close eyes, allow all senses to receive freely',
+  'Profoundly restored attention, reduced reactivity, the feeling of having been genuinely somewhere',
+  ['Set a gentle vibration timer for 5–7 minutes','Sit comfortably, spine straight','Close eyes fully — or soft downcast gaze','Allow all sounds: water, birds, voices, wind — receive without labelling or judging','Allow all physical sensations: temperature, air movement, clothing','Allow all thoughts to arise and pass — like clouds across the open sky','When timer vibrates: open eyes very slowly, remain still for 30 more seconds'],
+  '5–7 min','🟠 High',['Open Monitoring','Mindfulness Meditation','Emotional Regulation']);
+
+def('fri_reflection','','Weekly review','Weekly Mental & Life Review',
+  'Structured weekly review improves next-week performance by 23% compared to unreflective continuity (University of Toronto). For Ahmed managing 5 life roles, the 7-question review provides 360-degree assessment that prevents any role from silently deteriorating.',
+  'Corniche reflection complete — finding a quiet café or garden table',
+  'Clarity about the week past and precise direction for the week ahead',
+  'Work through all 7 questions in order — honest, specific, constructive',
+  'Direction, self-knowledge, and the peace of a person who knows where they are going',
+  ['Q1: Review your personal rules — which did you honour? Which did you break?','Q2: Financial pulse — are savings on track? Any upcoming payments?','Q3: Week goals — what was completed vs. missed? Why?','Q4: Three specific wins this week — name them precisely','Q5: What drained your energy — identify the pattern, not just the event','Q6: What do you need from the coming week? Be honest.','Q7: Single measurable goal for next week — specific, achievable, matters to you'],
+  '20–30 min','🔴 Critical',['Weekly Review','GTD','Self-Reflection']);
+
+def('fri_bathtub','','Bathtub soak)','Self-Care Block',
+  'A 37–40°C bath with Epsom salts: warm water triggers the parasympathetic nervous system; magnesium absorbs transdermally supporting muscle relaxation (70% of people are magnesium deficient); the 20-min duration allows core temperature rise then fall — signalling the brain to initiate sleep onset.',
+  'Weekly reflection complete — home bathroom prepared, latte in hand',
+  'Full muscular relaxation, cortisol flush, magnesium absorption, luxury of unrushed time',
+  'Draw the bath at 37–40°C, add 2 cups Epsom salts, bring latte and light snack, soak fully',
+  'Deep physical recovery, elevated magnesium, and the profound reset no other practice provides',
+  ['Fill bath — 37–40°C confirmed with comfortable forearm test','Add 2 cups Epsom salts (magnesium sulphate)','Bring latte + dates/nuts — set on bath edge','Ambient music playing softly from bathroom speaker','Enter bath slowly — allow body to acclimatise','Soak minimum 20 minutes — set a gentle timer','No phone in the bathroom'],
+  '20–30 min','🟠 High',['Magnesium','Epsom Salts','Parasympathetic Recovery','Self-Care']);
+
+def('fri_grooming','','Light grooming','Self-Care Block',
+  'The instruction "BEFORE Ghusl" reflects Islamic jurisprudence: removing nail clippings and hair should occur before Ghusl so the Ghusl completes purification of a fully groomed body. Regular grooming correlates with 23% higher confidence in professional settings.',
+  'Bath complete, body dry and relaxed — grooming tools pre-organised',
+  'A polished, cared-for appearance worthy of Jumuah and the family visits',
+  'Beard trim + oil, fingernails/toenails, hair treatment — systematically',
+  'Jumuah-ready appearance, professional confidence, a Ghusl that completes a groomed body',
+  ['Beard: trim with comb guard for consistency, then shape edges','Apply beard oil after trimming — 3–4 drops, work through beard thoroughly','Fingernails: trim with proper nail clipper, smooth any rough edges','Toenails: trim straight across to prevent ingrown nails','Hair: treatment oil if applicable','Eyebrows: shape only (do not thin excessively — Sunnah caution)','Ear and nose: quick trim if visible hair'],
+  '15–20 min','🟡 Medium-High',['Grooming','Friday Sunnah','Professional Appearance']);
+
+def('fri_ghusl','','Jumuah Ghusl','Jumuah Preparation',
+  'The Friday Ghusl is among the strongest Sunnah Mu\'akkadah — the Prophet ﷺ said: "Whoever comes to Jumuah, let him make Ghusl." (Bukhari). Performing Ghusl after all grooming is the correct Islamic sequence.',
+  'Grooming complete — Ghusl is the final purification before Jumuah',
+  'Complete purity, divine readiness, and the honour of standing before Allah at the highest level of cleanliness',
+  'Follow the sunnah sequence: Niyyah → hands → private areas → Wudu → head (×3 to roots) → right body → left body',
+  'Complete ritual purity, the sunnah fulfilled, and the profound feeling of renewal',
+  ['Niyyah (intention) for Ghusl — whispered in heart before beginning','Wash both hands three times','Wash private areas with left hand — remove all impurity','Perform full Wudu in correct sequence','Pour water over head three times — ensure it reaches scalp roots','Pour water over right side of body from shoulder to foot','Pour water over left side of body','Dry with a clean towel reserved for Ghusl use'],
+  '10 min','🌙 Sacred',['Friday Ghusl','Taharah','Jumuah Preparation']);
+
+def('fri_outfit','','Jumuah outfit','Jumuah Preparation',
+  'The Prophet ﷺ wore his finest clothes to Jumuah. Wearing a clean, pre-selected Jumuah outfit expresses esteem for the prayer and Allah\'s house. The generous perfume application is explicitly mentioned as sunnah practice in Hadith.',
+  'Ghusl complete, dry — Jumuah outfit pre-selected and hanging from Thursday night',
+  'Looking and smelling beautiful for Allah, the congregation, and the honour of Friday',
+  'Put on the Jumuah outfit deliberately, apply perfume generously, full-mirror intention moment',
+  'The quiet confidence of being dressed for God — a dignity that sustains through the entire Jumuah experience',
+  ['Jumuah outfit pre-selected Thursday night — clean, pressed, hanging visibly','Put on from top to bottom with deliberate care','Apply perfume generously to pulse points: wrists, neck, chest','Full mirror moment: "I am going to the house of Allah"','Check time — leave 45 minutes before Khutbah begins'],
+  '5 min','🌙 Sacred',['Jumuah Outfit','Friday Sunnah','Perfume']);
+
+def('fri_khutbah','','Jumuah Khutbah','Jumuah Preparation',
+  'Early arrival to Jumuah earns progressive reward in Islamic tradition. Early arrival allows Tahiyyat al-Masjid prayer and Quran reading before the Imam ascends. 10 minutes of quiet preparation before instruction improves retention by 22% (educational psychology).',
+  'Dressed, perfumed, time checked — leave home 45 minutes before Khutbah',
+  'The spiritual merit of early arrival and a full heart receiving the Khutbah',
+  'Walk to mosque unhurried, arrive 20 min early, pray Tahiyyat, recite Quran until Adhan',
+  'Early arriver\'s reward, optimal receptivity, one actionable lesson extracted from Khutbah',
+  ['Leave home exactly 45 min before Khutbah start time','Walk if mosque is walkable — the walk itself carries reward on Fridays','On arrival: pray 2 Rak\'ahs Tahiyyat al-Masjid immediately','Find a position in the front rows','Open Quran and continue reading until the Imam ascends','When Khutbah begins: full silence — phone on silent mode','At Khutbah close: voice-memo one actionable lesson before standing for Salah'],
+  '1.5–2 hours','🌙 Sacred',['Jumuah','Khutbah','Early Arrival']);
+
+def('fri_visit_family','','Visit extended family','Friday Family Block',
+  'Regular, predictable contact with family predicts longevity, psychological resilience, and life satisfaction (Holt-Lunstad). The protocol — parents first, 10–15 min undivided, each sibling individually, phone in pocket — is a research-aligned relationship maintenance framework.',
+  'Arrived at parents\' home — sweets in hand, phone in pocket',
+  'The warmth of belonging, parents\' joy, and the feeling of being a present son',
+  'Parents first — 10–15 min undivided attention, then each sibling individually',
+  'Family bonds maintained, silat al-rahm fulfilled, profound satisfaction of being genuinely present',
+  ['Enter with salaam and a warm embrace','Hand gift to parents immediately','Sit with parents for 10–15 min — phone in pocket, genuine undivided conversation','Ask specific questions: "How did the week treat you?"','After parents: circulate to each sibling individually','Avoid group conversation only — the individual moment is the connection','Ask one person: "Is there anything you need from me?"'],
+  '1–2 hours','🔴 Critical',['Silat Al-Rahm','Family Visits','Parental Connection']);
+
+def('fri_family_bkfst','','Family breakfast & quality time','Friday Family Block',
+  'Shared family meals produce measurably higher family cohesion scores and stronger cultural identity transmission (Cornell Food and Brand Lab). The Friday breakfast at parents\' home is Ahmed\'s most significant weekly belonging ritual.',
+  'The family is gathered — breakfast is ready or nearly ready',
+  'The specific joy of the Friday family table — a ritual that makes Ahmed who he is',
+  'Sit in habitual seat, Bismillah together, genuine question to each person, full presence',
+  'Deep belonging, family bond renewed, Mohamed growing up knowing what Friday mornings mean',
+  ['Sit in your regular seat — predictability is part of belonging rituals','Wait for all to be seated before Bismillah','One genuine question to each person present — specific to something mentioned last week','Listen fully after asking','Eat without rushing — this meal has no deadline','Stay at the table 10 min after eating','Help clear the table and wash up'],
+  '1–1.5 hours','🔴 Critical',['Family Breakfast','Friday Ritual','Silat Al-Rahm']);
+
+def('fri_minimal_phone','','Minimal Phone Use','Friday Family Block',
+  'The mere presence of a smartphone on a table — even face-down and silent — reduces available cognitive capacity by an amount equivalent to mild sleep deprivation (Ward, University of Texas, 2017).',
+  'Family visit in progress — the instinct to check the phone arises',
+  'Full presence with the people who matter most',
+  'Phone remains in pocket — no reaching, no checking, no "just a quick look"',
+  'Family who feel seen and valued, and Ahmed who experiences the full warmth of the visit',
+  ['Phone set to silent before entering parents\' house','Place phone in back pocket — less accessible than front','At every impulse to check: name what you\'re reaching for. Is it more important than this moment?','If urgent work call might come: inform team in advance','If a call comes: step outside briefly, keep it short, return immediately','First phone check outside the house after leaving — not before'],
+  'Throughout visit','🔴 Critical',['Phone-Free','Presence','Digital Boundary']);
+
+// ── SATURDAY
+def('sat_wake_natural','','Wake 08:30–09:30','Gentle Morning',
+  'Natural waking allows the sleep cycle to complete at its biological terminus. Cutting a sleep cycle short with an alarm increases cortisol by 30% at wake time (Walker). Saturday morning is a biological debt repayment.',
+  'Body wakes naturally — light through partial curtains, no alarm',
+  'Genuine rest completion and the rare pleasure of waking without obligation',
+  'Allow yourself to wake slowly — no phone for the first 10 minutes',
+  'Rested, genuinely recovered, ready for a Saturday of full presence rather than survival',
+  ['No alarm on Saturday morning','Partial curtain — soft morning light, not blackout','When eyes open: lie still 2–3 minutes, do not move for phone','Whisper Alhamdulillah','Stretch gently in bed: arms above head, legs extended, yawn freely','If Mohamed wakes you: greet him warmly from bed','No phone until you have been awake for 10 minutes'],
+  'Natural','🟠 High',['Natural Waking','Sleep Completion','Saturday Recovery']);
+
+def('sat_land_bkfst','','Option A — Outdoor nature breakfast','Family Walk & Breakfast',
+  'Outdoor eating activates the parasympathetic system through multiple sensory channels: birdsong at 1000–8000 Hz reduces cortisol; natural light anchors circadian rhythms; fresh air reduces inflammatory markers.',
+  'Saturday morning — Option A chosen Thursday night, food pre-prepared',
+  'The specific joy of eating outside with family in Banha\'s morning — unhurried, sensory, alive',
+  'Pack breakfast, walk or drive to pre-decided location, let Mohamed lead the pace',
+  'The memory of a family morning outdoors — the kind Mohamed will carry into his adult life',
+  ['Location pre-selected Thursday night (park, garden, riverside, quiet outdoor space)','Breakfast pre-prepared Friday night (sandwiches, fruits, eggs, juice)','Pack a simple mat or tablecloth — makes any surface feel intentional','Let Mohamed explore freely within your sight','Stay until he is genuinely ready to leave — not until your schedule says so'],
+  '1–2 hours','🟠 High',['Outdoor Eating','Nature Benefits','Family Saturday']);
+
+def('sat_cafe','','Option B — Café walk & coffee','Family Walk & Breakfast',
+  'People who regularly engage with their local urban environment report higher life satisfaction and community identity (environmental psychology). The café blends physical movement, social context, and couple connection.',
+  'Option B morning — walking together toward the café, Mohamed alongside',
+  'The specific Saturday pleasure of Banha\'s streets, a warm drink, and relaxed conversation',
+  'Walk together at an unhurried pace, order something different, genuine conversation',
+  'Local belonging, couple warmth, Mohamed experiencing Saturday life as rich and worth exploring',
+  ['Walk route pre-decided Thursday','Walking pace: slow, Mohamed\'s comfort determines speed','Order something new — not the default','Genuine conversation: "What are you thinking about lately?"','Stay 30–45 min — enough to settle into the atmosphere','Walk home at an even slower pace'],
+  '45–60 min','🟠 High',['Urban Belonging','Saturday Café','Couple Connection']);
+
+def('sat_outdoor_walk','','Family Walk together','Family Walk & Breakfast',
+  'Child-paced walking activates adult curiosity by exposing you to environmental details normally stridden past. For Mohamed, walking at his pace builds exploratory confidence, language development, and secure attachment.',
+  'Café or outdoor breakfast complete — returning toward home at Mohamed\'s pace',
+  'The unfiltered joy of a toddler discovering the world, with Baba as witness and companion',
+  'Follow Mohamed\'s attention — wherever he points, look; wherever he stops, stop',
+  'Mohamed\'s development deposits made, Ahmed\'s week gently processed, couple walking side by side',
+  ['No destination, no pace — Mohamed leads','Name everything he points at: Arabic first, then English','When he stops: stop and observe with him — what does he see that you had missed?','Hold his hand when available','Naira beside you — shoulder-to-shoulder walking is presence without words','Return when he is tired — watch for the signals'],
+  'Variable','🟠 High',['Child Development','Language Acquisition','Attachment Theory']);
+
+def('sat_sit_family','','Sit with wife & Kids','Home & Family Time',
+  '"Soft fascination" — passive, undemanding engagement — is the highest form of attentional recovery (Kaplan & Kaplan, Attention Restoration Theory). Sitting on the floor with Naira and Mohamed with no agenda is both rest and relationship simultaneously.',
+  'Home from morning outing — Mohamed is exploring, Naira is settling in',
+  'The specific quality of family presence that has no outcome requirement',
+  'Sit on the floor or sofa together — screens away, no agenda',
+  'The rare, deep rest of being genuinely present with the people you love, without pressure',
+  ['Phones in another room — not just face-down','No television as background','Notice what Mohamed is doing without directing — observe, don\'t manage','Lean toward Naira — physical proximity communicates presence without words','Allow boredom to arise if it does — that is the beginning of genuine rest','If conversation happens: wonderful. If it doesn\'t: equally wonderful.'],
+  '30–60 min','🔴 Critical',['Attention Restoration','Soft Fascination','Family Presence']);
+
+def('sat_activity_mohamed','','One shared activity with Kids','Home & Family Time',
+  'Child-led play "floor time" (Dr. Stanley Greenspan): 20–30 min of fully child-led play per day produces faster language development, stronger emotional regulation, and more secure attachment. You are his guest in his world.',
+  'Family sit complete — time to be specifically Mohamed\'s companion for a defined window',
+  'Mohamed\'s full delight, his laughter, and the depth of father-son connection that floor-time creates',
+  'Follow his exact lead: his toy, his pace, his rules',
+  'Mohamed\'s attachment deposits made, developmental milestones accelerated, memory of Baba on the floor',
+  ['Choose the time when Mohamed is most engaged — post-nap, or after lunch','Get literally on the floor — at his level, not sitting above him on the sofa','His toy, his choice — offer options if indecisive, but do not override','Mirror his actions: if he stacks, you stack; if he rolls, you roll','Narrate what he does: "You\'re putting the red block there — nice!"','Resist the urge to teach — this is companionship','30 min minimum'],
+  '20–30 min','🔴 Critical',['Child-Led Play','Stanley Greenspan','Attachment Theory','Floor Time']);
+
+def('sat_focus_90','','Work leftovers or financial accounts','Focus Window',
+  '90 min is the optimal single focus block before the ultradian rhythm demands a break (Csikszentmihalyi). The explicit "visible timer, Q2 tasks only, STOP when timer rings, no extension" prevents the "just 5 more minutes" creep that colonises the family afternoon.',
+  'Family time complete — 90-minute focus window is the agreed professional boundary',
+  'Professional progress without the usual workday pressure — clean, focused, finite',
+  'Timer on, Q2 tasks only, phone silent, STOP when alarm rings',
+  'Work done without guilt, Saturday afternoon protected',
+  ['Set visible timer — hourglass or phone timer placed on the desk','Q2 tasks only: important but not currently urgent (strategic, developmental, planning)','Phone on Do Not Disturb','No email processing in this window — Q2 means creation, not curation','When timer rings: STOP immediately. Save, close, walk away.','Brief note of exactly where you stopped','Inform Naira of the 90-minute window'],
+  '90 min','🟡 Medium-High',['Deep Work','Q2 Focus','Saturday Boundary']);
+
+def('sat_weekly_plan','','Weekly planning & review','Focus Window',
+  'Role-based weekly planning — where each life domain gets a score and a priority (Covey) — prevents the "achievement in one area, neglect in others" pattern. For Ahmed managing 5 roles, this is his holistic life dashboard.',
+  '90-minute focus window — one task is the weekly role review and planning',
+  'Clarity about all five life roles and confidence entering the coming week with intention',
+  'Score each role 1–10, identify the biggest gap, set 3 priorities for next week',
+  'Holistic direction, no role neglected, entering Sunday with a plan rather than a drift',
+  ['Open weekly review template (Notes app or journal)','Score each role honestly 1–10: Father | Husband | Professional | Muslim | Son','For each score below 7: one sentence — "I fell short here because..." without self-judgment','Identify which role gets most attention this week','Set 3 weekly priorities (not tasks — priorities are outcomes)','Calendar-block the key commitments for each role','End with one word for the week ahead'],
+  '20 min','🔴 Critical',['Weekly Review','Stephen Covey','Role-Based Planning','5 Roles']);
+
+def('sat_power_nap','','Power nap — 20–30 min','Personal Recharge',
+  'NASA studies: a 26-minute nap improved pilot performance by 34% and alertness by 54%. The hard rule "must end before 18:00" is neurologically grounded — napping after 18:00 reduces sleep pressure enough to delay sleep onset by 1–2 hours.',
+  'Focus window complete — body signals rest need; afternoon still ahead',
+  'Complete cognitive restoration and energy to be fully present for Saturday evening',
+  'Dark room, phone away, flat position, alarm set for exactly 25 minutes',
+  'Waking from nap feeling 2 hours younger — the evening becomes a completely different quality',
+  ['Set alarm for 25 min — not 30, not 45 (these create sleep inertia)','Darken the room: curtain drawn, eye mask if needed','Phone on Do Not Disturb and away from bed','Lie flat — not semi-reclined on sofa','Do not try to sleep — simply allow the body to rest; sleep will come','Wake at alarm immediately — splash cold water on face within 2 min'],
+  '20–30 min (before 18:00)','🟠 High',['Power Nap','NASA Sleep Research','Cognitive Restoration']);
+
+def('sat_maghrib','','Pray Maghrib on time','Evening Movement & Social',
+  'Regular, predictable temporal anchors improve psychological wellbeing and reduce the feeling that time is slipping away unnoticed. Maghrib is the official signal that the afternoon is complete and the evening is beginning — a divine temporal marker.',
+  'Maghrib notification — the sun has set, prayer time entered',
+  'Divine obedience at the transition hour — afternoon is now officially evening',
+  'Wudu → mosque if walkable → 3 Fard Rak\'ahs → 2 Sunnah → brief du\'aa',
+  'Fourth prayer fulfilled, evening officially begun, soul anchored at the day\'s transition',
+  ['Maghrib time notification — respond within 10 min of Adhan','Mosque if walkable — Jama\'ah for Maghrib carries significant reward','Home prayer: 3 Fard Rak\'ahs + 2 Sunnah after','Brief du\'aa for the evening','2 minutes of quiet sitting before picking up phone'],
+  '10 min','🌙 Sacred',['Maghrib Prayer','Evening Transition','Islamic Practice']);
+
+def('sat_solo_walk','','Solo walk between Maghrib and Isha','Evening Movement & Social',
+  'Walking without a destination activates creative associative thinking — the mind makes connections it cannot make when occupied with demands (Stanford "Wandering Mind" studies). This is Ahmed\'s personal sovereignty window.',
+  'Maghrib complete — between Maghrib and Isha, 40–60 min of evening remain',
+  'Solitude, movement, and the thinking space that only being alone provides',
+  'Walk alone — 15–25 min, Dhikr or personal thought, minimal phone',
+  'Processed thoughts, creative insights, and the deep recharge that solitude alone provides',
+  ['Walk route: anywhere — choose based on evening mood','No earphones for this walk — the solo is the point','Dhikr if willing: Subhanallah, Alhamdulillah, Allahu Akbar with each breath','Or simply think — let the mind wander to wherever it wants to go','Note any insight that arises — voice memo or pocket notebook','Return home 10 min before Isha time'],
+  '15–25 min','🟡 Medium-High',['Solitude','Walking Meditation','Dhikr','Creative Thinking']);
+
+def('sat_isha','','five prayers complete & Witr','Evening Movement & Social',
+  'Completed sequences produce significantly higher psychological wellbeing than incomplete ones (Zeigarnik Effect). Completing all five prayers preserves the structural integrity of the Islamic day. Witr after Isha seals the prayer day.',
+  'Solo walk complete — returning home before heading out for the social evening',
+  'Five prayers complete, Witr sealed, the day structurally whole in Allah\'s covenant',
+  'Wudu → 4 Fard Isha → 2 Sunnah → Witr → brief gratitude',
+  'The day is spiritually complete — what follows is leisure with a clear conscience',
+  ['Isha time confirmed — pray within the first third of the night','Mosque if heading out in that direction','Home prayer: 4 Fard + 2 Sunnah','Witr: 3 Rak\'ahs, Qunoot du\'aa in the final rak\'ah if desired','Du\'aa for the evening — for Naira\'s safety if going out separately, for Mohamed\'s night'],
+  '15 min','🌙 Sacred',['Isha Prayer','Witr','Five Pillars Complete']);
+
+def('sat_social','','Corniche / Café / Social / Bike / Gym or Tennis','Evening Movement & Social',
+  'Meaningful leisure activities are the primary source of "psychological detachment" from work — the recovery state that enables sustained high performance across years (Journal of Occupational Health Psychology).',
+  'Isha complete — evening open for 1.5–2 hours of genuine leisure',
+  'The particular joy that belongs to Saturday evening: freedom, pleasure, and personal renewal',
+  'Choose the evening\'s activity — Corniche, café, bike, gym, social visit — and engage fully',
+  'Recharged personal identity, pleasure experienced, return home as a rested, present person',
+  ['Pre-decide the activity Thursday night','Corniche walk: sensory richness, fresh air, the Nile evening atmosphere','Café: conversation with a friend, or solo coffee and observation','Gym or tennis: physical completion if gym day was not done this week','Social: see a friend or relative for a genuine, focused visit','Return home by 21:30 — hard boundary, communicated to anyone you\'re with','Text Naira 30 min before return'],
+  '1.5–2 hours','🟠 High',['Leisure','Psychological Detachment','Personal Renewal']);
+
+def('sat_dinner_family','️','Family Dinner','Dinner & Return',
+  'Frequency of family dinners is inversely correlated with every negative adolescent outcome and positively correlated with academic performance, wellbeing, and family cohesion (Columbia). Saturday\'s "best moment of Saturday?" makes this dinner distinct.',
+  'Home from social evening — shower complete, dinner is served or ready',
+  'The warmth of the family table on Saturday evening — connected, unhurried, beautiful',
+  'Set table together, phones in kitchen, Bismillah, "best moment of Saturday?" question',
+  'Family weekend completed at the table — the week closed with warmth',
+  ['Set the table before calling everyone — preparation communicates intention','Phones in kitchen for both Ahmed and Naira','Bismillah together — include Mohamed even as infant','Opening question: "What was your best moment of Saturday today?"','Eat without hurrying — this is not fuel intake; it is family time with food','Stay at the table after eating: 10 min minimum','Help clear together'],
+  '30–40 min','🔴 Critical',['Family Dinner','Screen-Free','Saturday Ritual']);
+
+def('sat_before_sleep','','Couple Quiet Time','Dinner & Return',
+  'The final 20 minutes before sleep are disproportionately impactful on relationship quality — what happens in this space shapes the emotional tone of the following day (Gottman Institute). Saturday couple time is the end-of-week renewal of the partnership covenant.',
+  'Mohamed settled for the night — the last quiet couple window of the week',
+  'Deep couple warmth, physical closeness, and the sense of a week well-lived together',
+  'Side by side — warm conversation, physical proximity, week reviewed briefly in gratitude',
+  'Sleeping in the feeling of marital fullness — the best foundation for a Sunday',
+  ['Mohamed confirmed asleep','Sit beside each other — same direction, same home','Physical closeness: hand-holding, shoulder contact, natural warmth','Brief week review: "What did we do well this week as a couple?"','Gratitude exchange: one specific thing you are grateful for about your partner — said directly','Physical intimacy if energy and desire is present','Close with: "Thank you for this week." — eye contact, genuine'],
+  '30–45 min','🔴 Critical',['Couple Connection','Gottman Method','Marital Warmth']);
+
+def('sat_night_prep','','Night prep for work & gym','Night Preparation',
+  'The pre-commitment technique — laying out Sunday\'s clothes and packing bags Saturday night — is one of the highest-ROI morning habit enablers. Sunday-Ahmed\'s morning has zero clothing decisions, zero bag-packing decisions.',
+  'Couple time closing — physical environment needs preparing for Sunday morning',
+  'Zero Sunday morning decision burden — everything ready, everything visible',
+  'Select + hang Sunday clothes, pack work bag, pack gym bag, set nursery bag',
+  'Sunday morning runs smoothly — because Saturday-Ahmed did the work',
+  ['Sunday work outfit: select and hang on a dedicated hook','Iron or steam if needed','Work bag: laptop, charger, notebook, transit card, headphones — fully packed','Gym bag (if Monday is gym day): packed tonight — shirt, shorts, trainers, toiletries','Mohamed\'s nursery bag: nappies, food, clothes, blanket — replenished and checked','Water glass: pre-place on bedside table tonight','All bags placed by the front door — visible, accessible, ready'],
+  '10–15 min','🟠 High',['Pre-Commitment','Morning Optimisation','Sunday Preparation']);
+
+def('sat_azkar','','Azkar before sleep (Night Azkar)','Night Preparation',
+  'The Saturday Night Azkar close the full week with divine remembrance. From Sunday\'s Sobh Azkar to Saturday\'s Night Azkar, the week is bookended and stitched together by dhikr — simultaneously spiritual and sleep-supportive.',
+  'In bed, positioned on right side — Saturday night, week closing',
+  'Divine protection through the night and the soul\'s peace of a week concluded in Allah\'s care',
+  'Recite Night Azkar with slow, full intention — the week closes as it lived: in remembrance',
+  'Sleep under divine protection, soul at peace, Sunday morning arising from Allah\'s night',
+  ['Position on right side — sunnah and sleep-quality optimal','Ayat al-Kursi first — the throne verse as the night\'s protection','Al-Ikhlas, Al-Falaq, An-Nas ×3 each — blow into cupped hands, wipe over body','Tasbeeh: 33× Subhanallah, 33× Alhamdulillah, 34× Allahu Akbar','Final du\'aa: personal words for Mohamed, Naira, parents, the ummah','Bismika Allahumma amutu wa ahya — the last conscious words','Let the body release into sleep'],
+  '5–7 min','🌙 Sacred',['Night Azkar','Saturday Closure','Weekly Dhikr'],NIGHT_AZK);
+
+def('sat_sleep_midnight','','Sleep before midnight','Night Preparation',
+  'Consistent sleep timing is the single most impactful circadian health behaviour available (Walker). For Ahmed whose week begins on Sunday, Saturday\'s sleep timing is the launch pad for the entire coming week.',
+  'Night Azkar complete — screens off, bedroom ready, body prepared',
+  'Deep restorative sleep that makes Sunday a joy rather than a recovery from Saturday',
+  'Screens off at 22:30, bedroom 18–20°C, right side, eyes close — sleep before midnight',
+  '06:00 wake with full energy, ready for Mohamed\'s drop, Azkar, Quran, and the week ahead',
+  ['Screens off at 22:30 — phone charger in the kitchen, not bedroom','Bedroom temperature 18–20°C','Blackout curtains','On right side — sunnah and sleep quality optimal','Final conscious action: Bismika Allahumma amutu wa ahya','Target sleep before midnight — 23:30 maximum','If racing mind: 4-7-8 breathing until sleep arrives'],
+  'Before midnight','🔴 Critical',['Sleep Timing','Matthew Walker','Circadian Rhythm','Week Launch']);
+
+// ── WEEKLY HABITS
+def('weekly_planning','','Weekly planning & review','Weekly Habits',
+  'The weekly review is the meta-habit that organises and protects all other habits. GTD (Allen) and Covey demonstrate that weekly planning reduces stress, improves task completion, and provides the "big picture" context that daily urgency removes.',
+  'Designated weekly planning time — typically Saturday focus window',
+  'Direction, clarity, and the confidence of a person with a plan rather than a drift',
+  'Full GTD-style review: collect, process, organise, review, engage',
+  'A week that is intentionally lived rather than reactively survived',
+  ['Collect all open loops: physical inbox, email, notes, mind','Process each item: what is it? What is the next action?','Organise into categories: actions, projects, reference, someday/maybe','Review all active projects: is each moving forward?','Review calendar forward 2 weeks','Identify the week\'s top 3 priorities by role','Write Sunday-to-Thursday plan'],
+  '30–45 min','🔴 Critical',['GTD','Weekly Review','David Allen','Strategic Planning']);
+
+def('financial_check','','Weekly financial check','Weekly Habits',
+  'Financial anxiety directly reduces cognitive performance at work (Cambridge). The weekly financial check is a hygiene practice that prevents the accumulation of unexamined debt, missed savings targets, and payment surprises.',
+  'Weekly planning session — financial check is the final segment',
+  'Financial clarity, anxiety reduction, and the control that comes from knowing the numbers',
+  'Open banking app, review transactions, check savings progress, note upcoming payments',
+  'Financial calm, accountability, and no surprises at month\'s end',
+  ['Open banking app — review all transactions from the past 7 days','Categorise any untracked spending','Check savings account: is the weekly 5% (toward monthly 20%) on target?','Note any upcoming payments in the next 7 days','Any spending that surprised you: categorise and understand the trigger','Review Zakah status: annual calculation on track?','One financial adjustment if needed'],
+  '10–15 min','🟠 High',['Personal Finance','Savings','Zakah','Financial Health']);
+
+def('sibling_call','','Call siblings','Weekly Habits',
+  'Adult sibling relationships are the most neglected of all close relationships (UCL). Siblings who have regular, individual conversations maintain stronger bonds across decades. A specific practical offer with a concrete date transforms the visit from social proximity to genuine support.',
+  'Weekly time slot designated for sibling connection',
+  'The specific bond with each sibling — knowing each one separately, not just as "the siblings"',
+  'Call one sibling — genuine, individual conversation, specific help offered',
+  'Siblings who feel genuinely supported, and a family network that holds Ahmed when he needs it',
+  ['Rotate through: Omer, Bardes, Sama — one each week minimum','Open with genuine interest in their specific life','Listen without giving advice unless asked','Offer something specific: "I can help with [X]"','Set a concrete next-contact date','Note any specific need mentioned — follow up within 48 hours'],
+  '10–15 min','🟠 High',['Sibling Bond','Silat Al-Rahm','Active Support']);
+
+
+// ── Schedule structure ─────────────────────────────────────
+const SCHEDULE = [
+  {
+    day: 'Workdays',
+    cats: [
+      {id:'morning', label:'Morning Routine', emoji:'', sections:[
+        {id:'anchor', label:'Morning Anchor', days:['Su','Mo','Tu','We','Th'], keys:['wake_06','water_250']},
+        {id:'bkfst',  label:'Breakfast',       days:['Su','Mo','Tu','We','Th'], keys:['breakfast_10']},
+        {id:'move',   label:'Move First',       days:['Su','Mo','Tu','We','Th'], keys:['bike_treadmill']},
+        {id:'breath', label:'Intentional Breathing', days:['Su','Mo','Tu','We','Th'], keys:['int_breathing']},
+        {id:'refresh',label:'Reset & Refresh',  days:['Su','Mo','Tu','We','Th'], keys:['shower','teeth','hair','skin_care']},
+        {id:'spirit', label:'Spiritual Reset',  days:['Su','Mo','Tu','We','Th'], keys:['wudu','pray_sobh']},
+        {id:'depart', label:'Get Ready & Depart', days:['Su','Mo','Tu','We','Th'], keys:['dress_grooming','mohamed_ready']},
+        {id:'transit1',label:'Nursery Drop & Transit', days:['Su','Mo','Tu','We','Th'], keys:['nursery_drop','park','transit_0705']},
+        {id:'commute', label:'Morning Transit Ritual', days:['Su','Mo','Tu','We','Th'], keys:['azkar_sabah','quran_hizb','todo_list','podcast_am','calm_transit']},
+      ]},
+      {id:'work', label:'Work Time', emoji:'', sections:[
+        {id:'work_exec', label:'Work Execution', days:['Su','Mo','Tu','We','Th'], keys:['hydration_posture','emails_30','deep_work','family_call','workshop_rounds','lunch_detox','dhuhr_asr_maghrib','eod_prep']},
+      ]},
+      {id:'evening', label:'Evening', emoji:'', sections:[
+        {id:'eve_transit', label:'Evening Transit', days:['Su','Mo','Tu','We','Th'], keys:['evening_azkar','evening_podcast','evening_call','calm_music']},
+        {id:'aw_a', label:'After Work — Option A: Gym / Tennis', days:['Su','Mo','Tu','We','Th'], keys:['aw_a_car','aw_a_workout','aw_a_shower','aw_a_isha','aw_a_dinner','aw_a_family'], isOption:true},
+        {id:'aw_b', label:'After Work — Option B: Family Day', days:['Su','Mo','Tu','We','Th'], keys:['aw_b_home_early','aw_b_light_dinner','aw_b_walk','aw_b_help_wife','aw_b_quality_time','aw_b_isha','aw_b_winddown'], isOption:true},
+      ]},
+      {id:'night', label:'Night', emoji:'', sections:[
+        {id:'night_close', label:'Night Closure', days:['Su','Mo','Tu','We','Th'], keys:['night_prep','body_face_night','mood_review','night_azkar','sleep_midnight']},
+      ]},
+    ]
+  },
+  {
+    day: 'Thursday',
+    cats: [
+      {id:'thu', label:'Evening Ritual', emoji:'', sections:[
+        {id:'thu_eve', label:'Thursday Evening', days:['Th'], keys:['thu_grocery','thu_essentials','thu_dinner','thu_movie','thu_wife']},
+      ]}
+    ]
+  },
+  {
+    day: 'Friday',
+    cats: [
+      {id:'fri_morning', label:'Routine', emoji:'', sections:[
+        {id:'fri_pre', label:'Pre-Dawn Anchor', days:['Fr'], keys:['fri_fajr','fri_return_sleep']},
+        {id:'fri_reset', label:'Morning Reset', days:['Fr'], keys:['fri_water_300','fri_sports_outfit','fri_stretching']},
+        {id:'fri_active', label:'Active Sunrise', days:['Fr'], keys:['fri_bike']},
+        {id:'fri_mindful', label:'Mindful Time', days:['Fr'], keys:['fri_sit_sea','fri_adhkar','fri_kahf','fri_mindful_obs']},
+        {id:'fri_review', label:'Weekly Mental & Life Review', days:['Fr'], keys:['fri_reflection']},
+        {id:'fri_self', label:'Self-Care Block', days:['Fr'], keys:['fri_bathtub','fri_grooming']},
+        {id:'fri_jum', label:'Jumuah Preparation', days:['Fr'], keys:['fri_ghusl','fri_outfit','fri_khutbah']},
+        {id:'fri_fam', label:'Friday Family Block', days:['Fr'], keys:['fri_visit_family','fri_family_bkfst','fri_minimal_phone']},
+      ]}
+    ]
+  },
+  {
+    day: 'Saturday',
+    cats: [
+      {id:'sat_day', label:'Routine', emoji:'', sections:[
+        {id:'sat_morning', label:'Gentle Morning', days:['Sa'], keys:['sat_wake_natural']},
+        {id:'sat_walk', label:'Family Walk & Breakfast', days:['Sa'], keys:['sat_land_bkfst','sat_cafe','sat_outdoor_walk']},
+        {id:'sat_home', label:'Home & Family Time', days:['Sa'], keys:['sat_sit_family','sat_activity_mohamed']},
+        {id:'sat_focus', label:'Focus Window', days:['Sa'], keys:['sat_focus_90','sat_weekly_plan','sat_power_nap']},
+        {id:'sat_eve', label:'Evening Movement & Social', days:['Sa'], keys:['sat_maghrib','sat_solo_walk','sat_isha','sat_social']},
+        {id:'sat_dinner', label:'Dinner & Return', days:['Sa'], keys:['sat_dinner_family','sat_before_sleep']},
+        {id:'sat_night', label:'Night Preparation', days:['Sa'], keys:['sat_night_prep','sat_azkar','sat_sleep_midnight']},
+      ]}
+    ]
+  },
+  {
+    day: 'Weekly',
+    cats: [
+      {id:'weekly', label:'Habits', emoji:'', sections:[
+        {id:'wk_habits', label:'Weekly Habits', days:['Sa'], keys:['weekly_planning','financial_check','sibling_call']},
+      ]}
+    ]
+  }
+];
+
+const MONTHLY_HABITS = [
+  {ico:'', name:'REGULAR CHECK-UPS', weeks:1},
+  {ico:'', name:'FINANCIAL REVIEW', weeks:4},
+  {ico:'', name:'READING TARGET', weeks:4},
+  {ico:'', name:'CINEMA DAY', weeks:1},
+  {ico:'', name:'EXTENDED FAMILY VISIT', weeks:4},
+  {ico:'', name:'DIGITAL DETOX', weeks:1},
+  {ico:'', name:'FITNESS REVIEW', weeks:1},
+  {ico:'', name:'ORGANIZING PHONE DATA', weeks:1},
+  {ico:'', name:'CHILL OUT WITH WIFE', weeks:1},
+  {ico:'', name:'CHILL OUT WITH FAMILY', weeks:2},
+  {ico:'', name:'CHILL OUT WITH FRIENDS', weeks:2},
+  {ico:'', name:'PAY ZAKAH', weeks:2},
+  {ico:'', name:'MONTHLY SHOPPING', weeks:1},
+];
+
+
+const DEPARTURE_ITEMS = [
+  {id:'dep_apt_keys',     label:'Apartment keys'},
+  {id:'dep_car_key',      label:'Car key'},
+  {id:'dep_glasses',      label:'Glasses'},
+  {id:'dep_phone1',       label:'Primary phone charged'},
+  {id:'dep_phone2',       label:'Secondary phone charged'},
+  {id:'dep_ipad',         label:'iPad charged'},
+  {id:'dep_headphones',   label:'Headphones'},
+  {id:'dep_books',        label:'Books'},
+  {id:'dep_wallet',       label:'Wallet'},
+  {id:'dep_adapter',      label:'Adapter and cable'},
+  {id:'dep_perfume',      label:'Perfume'},
+  {id:'dep_workout_bag',  label:'Workout bag', optional:true},
+  {id:'dep_water_bag',    label:'Water & detox lunch bag'},
+  {id:'dep_coffee_bag',   label:'Coffee lunch bag'},
+  {id:'dep_lunch_bag',    label:'Lunch & snacks lunch bag'},
+  {id:'dep_transit_card', label:'Transit card'},
+  {id:'dep_notebook',     label:'Notebook & pen'},
+  {id:'dep_badge',        label:'Work badge / ID'},
+  {id:'dep_mask',         label:'Mask (if needed)', optional:true},
+  {id:'dep_umbrella',     label:'Umbrella (if rain)', optional:true},
+];
+
+const PERSONAL_RULES = [
+  'Begin every day with Allah\'s name and a clear intention',
+  'Mohamed and Naira before the phone — always',
+  'Workshop floor time beats emails every time',
+  'Pre-plan the night before to own the morning',
+  'Gym/tennis 3× weekly — non-negotiable self-care',
+  'Friday is sacred: Fajr, bike, Jumuah, family, rest',
+  'Say what you mean, do what you say — professional credibility is built daily',
+  'Screens off by 22:30 — protect your sleep and your family\'s mornings',
+  'Gratitude at night, intention in the morning — bookend every day with awareness',
+];
+
+// ── STATE ──────────────────────────────────────────────────
+let STATE = loadState();
+let currentWeek = '';
+
+// ── HELPERS ────────────────────────────────────────────────
+function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function itemKey(iid, sub){ return 'item:'+iid+(sub?':'+sub:''); }
+function cbKey(iid, day){ return 'cb:'+currentWeek+':'+iid+':'+day; }
+function moodKey(week, dim, day){ return 'mood:'+week+':'+dim+':'+day; }
+
+// ── RENDER ENGINE ──────────────────────────────────────────
+function buildTOC(){
+  const tocBody = document.getElementById('tocBody');
+  let html = '';
+  // Only show Workdays, Thursday, Friday, Saturday in sidebar — skip Weekly
+  SCHEDULE.filter(block=>block.day !== 'Weekly').forEach(block=>{
+    block.cats.forEach(cat=>{
+      const uid = 'toc-'+cat.id;
+      html += `<div class="toc-cat">
+        <button class="toc-cbtn" id="${uid}-btn" onclick="toggleTocCat('${uid}')">
+          <span>${esc(block.day)} — ${esc(cat.label)}</span>
+          <span class="toc-chev" id="${uid}-chev">&#9654;</span>
+        </button>
+        <div class="toc-subs" id="${uid}-subs">`;
+      cat.sections.forEach(sec=>{
+        html += `<span class="toc-sl" onclick="scrollToSection('sec-${sec.id}');closeTOC()">${esc(sec.label)}</span>`;
+      });
+      html += '</div></div>';
+    });
+  });
+  tocBody.innerHTML = html;
+}
+
+function toggleTocCat(uid){
+  const btn = document.getElementById(uid+'-btn');
+  const subs = document.getElementById(uid+'-subs');
+  const chev = document.getElementById(uid+'-chev');
+  btn.classList.toggle('open');
+  subs.classList.toggle('open');
+}
+function scrollToSection(id){
+  const el = document.getElementById(id);
+  if(!el) return;
+  // Find which panel this element lives in and switch to it
+  const panel = el.closest('.tab-panel');
+  if(panel){
+    const tabId = panel.id.replace('panel-','');
+    const tabBtn = document.querySelector(`.tab-btn[onclick*="'${tabId}'"]`);
+    switchTab(tabId, tabBtn);
+  }
+  setTimeout(()=>{ el.scrollIntoView({behavior:'smooth', block:'start'}); }, 80);
+}
+
+function buildMain(){
+  // Routine panel — all blocks except Weekly
+  const main = document.getElementById('mainContent');
+  let html = '';
+  SCHEDULE.filter(b=>b.day!=='Weekly').forEach(block=>{
+    html += `<div class="cat-hdr"><span class="cat-title">${esc(block.day)}</span><div class="cat-line"></div></div>`;
+    block.cats.forEach(cat=>{
+      cat.sections.forEach(sec=>{ html += buildSection(sec, cat); });
+    });
+  });
+  main.innerHTML = html;
+
+  // Weekly panel
+  let whtml = '';
+  SCHEDULE.filter(b=>b.day==='Weekly').forEach(block=>{
+    block.cats.forEach(cat=>{
+      cat.sections.forEach(sec=>{ whtml += buildSection(sec, cat); });
+    });
+  });
+  document.getElementById('weeklyContent').innerHTML = whtml || '<div style="padding:2rem;text-align:center;color:var(--muted)">No weekly habits defined.</div>';
+
+  // Other panels
+  document.getElementById('departureContent').innerHTML = buildDepartureSection();
+  document.getElementById('monthlyContent').innerHTML = buildMonthlySection();
+  document.getElementById('moodContent').innerHTML = buildMoodSection();
+  document.getElementById('progressContent').innerHTML = buildProgressSection();
+  document.getElementById('rulesContent').innerHTML = buildRulesSection();
+
+  updateHeaderStats();
+}
+
+function buildSection(sec, cat){
+  const items = sec.keys.map(k=>ITEMS.find(i=>i.id===k)).filter(Boolean);
+  if(!items.length) return '';
+  const isOption = cat.sections ? false : true;
+  const optBadge = sec.id.startsWith('aw_') ? `<span style="background:rgba(255,255,255,.15);color:#fff;font-size:.62rem;padding:.1rem .45rem;border-radius:10px;margin-left:.4rem;">Choose one</span>` : '';
+  let html = `<div class="sec-card" id="sec-${sec.id}">
+    <div class="sec-hdr">
+      <div class="sec-hdr-l">
+        <span class="sec-emoji">${cat.emoji||'📋'}</span>
+        <span class="sec-title" data-editable data-edit-key="sec:${sec.id}:label" contenteditable="false">${esc(sec.label)}</span>${optBadge}
+        <button class="add-item-btn" onclick="addTaskToSection('${sec.id}')">+ Task</button>
+      </div>
+      <button class="toc-ret" onclick="openTOC()">&#9776;</button>
+    </div>
+    <div class="sec-body">
+      <table class="task-tbl">
+        <thead><tr>
+          <th>Task</th>`;
+  sec.days.forEach(d=>{ html += `<th>${d}</th>`; });
+  html += `<th>&#9432;</th></tr></thead><tbody>`;
+  items.forEach(item=>{
+    html += buildTaskRow(item, sec, sec.id);
+  });
+  html += '</tbody></table>';
+  html += `<div class="add-task-row">
+    <input class="add-task-inp" id="new-task-name-${sec.id}" placeholder="New task name…">
+    <input class="add-task-inp" id="new-task-dur-${sec.id}" placeholder="Duration" style="max-width:100px">
+    <button class="add-task-do" onclick="addTaskToSection('${sec.id}')">+ Add</button>
+  </div>`;
+  html += '</div></div>';
+  return html;
+}
+
+function buildTaskRow(item, sec, secId){
+  const state = STATE;
+  let cbHtml = '';
+  sec.days.forEach(d=>{
+    const key = cbKey(item.id, d);
+    const checked = state[key] ? 'checked' : '';
+    cbHtml += `<td class="cb-cell"><input type="checkbox" class="day-cb" ${checked} onchange="toggleCB('${item.id}','${d}',this)"></td>`;
+  });
+  const detId = 'det-'+item.id;
+  return `<tr>
+    <td class="tnc">
+      <button class="tnbtn" onclick="toggleDetail('${detId}','${item.id}')">
+        <span data-editable data-edit-key="item:${item.id}:name" class="light-editable" contenteditable="false" style="display:inline">${item.ico} ${esc(item.name)}</span>
+        <span class="texp" id="texp-${item.id}">&#9660;</span>
+      </button>
+      <button class="del-item-btn" onclick="removeTaskFromSection('${item.id}','${secId}')" title="Remove task">✕</button>
+    </td>
+    ${cbHtml}
+    <td><span data-editable data-edit-key="item:${item.id}:dur" contenteditable="false">${esc(item.dur)}</span></td>
+  </tr>
+  <tr class="det-row" id="${detId}-row">
+    <td colspan="${sec.days.length+2}">${buildDetailCard(item, detId)}</td>
+  </tr>`;
+}
+
+function buildDetailCard(item, detId){
+  let stepsHtml = '';
+  const stateKey = itemKey(item.id,'steps');
+  const doneSteps = STATE[stateKey]||[];
+  item.steps.forEach((s,i)=>{
+    const done = doneSteps.includes(i) ? 'done':'';
+    const chkTxt = doneSteps.includes(i) ? '&#10003;':'';
+    stepsHtml += `<div class="sub-item ${done}" id="step-${item.id}-${i}">
+      <div class="sub-chk" onclick="toggleStep('${item.id}',${i})">${chkTxt}</div>
+      <span class="sub-num">${i+1}.</span>
+      <span class="sub-txt" data-editable contenteditable="false" onblur="onStepBlur('${item.id}',${i},this)" style="display:inline-block;min-width:20px">${esc(s)}</span>
+      <button class="del-step-btn" onclick="removeStep('${item.id}',${i})" title="Remove step">✕</button>
+    </div>`;
+  });
+  const prog = doneSteps.length+'/'+item.steps.length;
+  let azkarHtml = '';
+  if(item.azkar && item.azkar.length){
+    azkarHtml = '<div class="det-stitle">Azkar / Dhikr</div>';
+    item.azkar.forEach(z=>{
+      azkarHtml += `<div class="azk-item">
+        <div class="azk-ar">${esc(z.ar)}<div class="azk-tr">${esc(z.tr)}</div></div>
+        <span class="azk-c">×${z.c}</span>
+      </div>`;
+    });
+  }
+  return `<div class="det-card" id="${detId}">
+    <div class="det-hdr">
+      <span class="det-ico">${item.ico}</span>
+      <div class="det-meta">
+        <div class="det-tag">${esc(item.section)}</div>
+        <div class="det-name" data-editable data-edit-key="item:${item.id}:name" class="light-editable" contenteditable="false">${esc(item.name)}</div>
+      </div>
+      <button class="det-xbtn" onclick="toggleDetail('${detId}','${item.id}')">&#10005;</button>
+    </div>
+    <div class="det-stitle">Why this matters</div>
+    <div class="det-why" data-editable data-edit-key="item:${item.id}:why" contenteditable="false">${esc(item.why)}</div>
+    <div class="det-stitle">Habit Loop</div>
+    <div class="loop-grid">
+      <div class="lc lc-cue"><div class="lc-lbl">&#128270; Cue</div><div class="lc-txt" data-editable data-edit-key="item:${item.id}:cue" contenteditable="false">${esc(item.loop.cue)}</div></div>
+      <div class="lc lc-crv"><div class="lc-lbl">&#10024; Craving</div><div class="lc-txt" data-editable data-edit-key="item:${item.id}:craving" contenteditable="false">${esc(item.loop.craving)}</div></div>
+      <div class="lc lc-res"><div class="lc-lbl">&#9889; Response</div><div class="lc-txt" data-editable data-edit-key="item:${item.id}:response" contenteditable="false">${esc(item.loop.response)}</div></div>
+      <div class="lc lc-rew"><div class="lc-lbl">&#127942; Reward</div><div class="lc-txt" data-editable data-edit-key="item:${item.id}:reward" contenteditable="false">${esc(item.loop.reward)}</div></div>
+    </div>
+    <div class="det-stitle" style="display:flex;justify-content:space-between;align-items:center">
+      <span>Steps <span class="sub-prog">${prog}</span></span>
+      <button class="rst-btn" onclick="resetSteps('${item.id}')">Reset</button>
+    </div>
+    <div class="sub-list">${stepsHtml}</div>
+    <button class="add-step-btn" onclick="addStep('${item.id}')">+ Add Step</button>
+    <div class="det-stitle">Impact & Tags</div>
+    <div class="impact-grid">
+      <div><div class="imp-lbl">Duration</div><div class="imp-val" data-editable data-edit-key="item:${item.id}:dur" contenteditable="false">${esc(item.dur)}</div></div>
+      <div><div class="imp-lbl">Priority</div><div class="imp-val" data-editable data-edit-key="item:${item.id}:imp" contenteditable="false">${esc(item.imp)}</div></div>
+    </div>
+    <div style="margin-top:.6rem" class="tags-list">${item.tags.map(t=>`<span class="tag-pill">${esc(t)}</span>`).join('')}</div>
+    ${azkarHtml}
+  </div>`;
+}
+
+function buildMonthlySection(){
+  const now = new Date();
+  let dots = '';
+  MONTHLY_HABITS.forEach((h,hi)=>{
+    let dotHtml = '';
+    for(let w=1;w<=h.weeks;w++){
+      const key = 'monthly:'+hi+':'+w+':'+now.getFullYear()+':'+now.getMonth();
+      const done = STATE[key]?'done':'';
+      dotHtml += `<div class="mo-dot ${done}" onclick="toggleMonthly(${hi},${w},'${key}')">${w}</div>`;
+    }
+    dots += `<div class="mo-card">
+      <div class="mo-top">
+        <span class="mo-name mo-name-edit" data-editable data-edit-key="mo:${hi}:name" contenteditable="false">${esc(h.name)}</span>
+        <button class="mo-del-btn" onclick="deleteMonthlyHabit(${hi})" title="Remove">✕</button>
+      </div>
+      <div class="mo-dots">${dotHtml}</div>
+    </div>`;
+  });
+  return `<div class="sec-card" id="sec-monthly">
+    <div class="sec-hdr">
+      <div class="sec-hdr-l"><span class="sec-emoji">📅</span><span class="sec-title">Monthly Habits</span></div>
+      <button class="toc-ret" onclick="openTOC()">&#9776;</button>
+    </div>
+    <div class="mo-grid" id="mo-grid-inner">${dots}</div>
+    <div class="mo-add-row">
+      <input type="text" id="mo-new-name" placeholder="New habit name…" style="flex:1;min-width:140px;border:1px solid var(--line);border-radius:8px;padding:.38rem .7rem;font-family:'DM Sans',sans-serif;font-size:.83rem;color:var(--ink);background:var(--cream);outline:none">
+      <input type="number" id="mo-new-weeks" min="1" max="5" value="1" placeholder="Reps" style="width:58px;border:1px solid var(--line);border-radius:8px;padding:.38rem .5rem;font-family:'DM Sans',sans-serif;font-size:.83rem;color:var(--ink);background:var(--cream);outline:none;text-align:center">
+      <button onclick="addMonthlyHabit()" style="background:linear-gradient(135deg,var(--a),var(--al));color:#fff;border:none;border-radius:8px;padding:.4rem .9rem;font-size:.82rem;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;white-space:nowrap">+ Add</button>
+    </div>
+  </div>`;
+}
+
+function buildMoodSection(){
+  const days = ['Su','Mo','Tu','We','Th'];
+  const emojis = ['😞','😕','😐','🙂','😊'];
+  let gridHtml = '';
+  // header row
+  gridHtml += '<div class="mood-rl"></div>';
+  days.forEach(d=>{ gridHtml += `<div class="mood-col"><div class="mood-ch">${d}</div></div>`; });
+  // mood rows
+  ['Energy','Focus','Mood'].forEach(dim=>{
+    gridHtml += `<div class="mood-rl">${dim}</div>`;
+    days.forEach(d=>{
+      const key = moodKey(currentWeek,dim,d);
+      const sel = STATE[key]||null;
+      gridHtml += '<div class="mood-col">';
+      emojis.forEach((e,i)=>{
+        const isSel = sel===i?'sel':'';
+        gridHtml += `<button class="mood-ebtn ${isSel}" onclick="setMood('${dim}','${d}',${i},'${key}',this)">${e}</button>`;
+      });
+      gridHtml += '</div>';
+    });
+  });
+  const bKey = 'boosters:'+currentWeek;
+  const dKey2 = 'drains:'+currentWeek;
+  const activeBoosters = STATE[bKey]||[];
+  const activeDrains = STATE[dKey2]||[];
+  const boosters = ['Family time','Deep work','Exercise','Prayer','Nature','Music','Learning','Cooking'];
+  const drains = ['Long meetings','Phone overuse','Poor sleep','Commute stress','Decision fatigue','Unhealthy food'];
+  const bPills = boosters.map(b=>`<span class="bpill ${activeBoosters.includes(b)?'act':''}" onclick="togglePill('${bKey}','${esc(b)}',this)">${esc(b)}</span>`).join('');
+  const dPills = drains.map(d=>`<span class="dpill ${activeDrains.includes(d)?'act':''}" onclick="togglePill('${dKey2}','${esc(d)}',this)">${esc(d)}</span>`).join('');
+  const rKey = 'refl:'+currentWeek;
+  const refl = STATE[rKey]||{win:'',challenge:'',intention:''};
+  return `<div class="sec-card" id="sec-mood">
+    <div class="sec-hdr">
+      <div class="sec-hdr-l"><span class="sec-emoji"></span><span class="sec-title">Mood & Energy Tracker</span></div>
+      <button class="toc-ret" onclick="openTOC()">&#9776;</button>
+    </div>
+    <div class="mood-body">
+      <div style="font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--a);margin-bottom:.6rem">Daily Mood Log</div>
+      <div class="mood-grid">${gridHtml}</div>
+      <div style="font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--a);margin-bottom:.4rem">Energy Boosters this week</div>
+      <div class="pills-grp">${bPills}</div>
+      <div style="font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--red);margin-bottom:.4rem">Energy Drains this week</div>
+      <div class="pills-grp">${dPills}</div>
+      <div style="font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--a);margin:.8rem 0 .5rem">Weekly Reflection</div>
+      <div class="refl-grid">
+        <div class="refl-f"><label>&#127942; This week&rsquo;s win</label><textarea id="refl-win" onchange="saveRefl()" placeholder="Name one specific win...">${esc(refl.win)}</textarea></div>
+        <div class="refl-f"><label>&#128270; This week&rsquo;s challenge</label><textarea id="refl-challenge" onchange="saveRefl()" placeholder="What was difficult?">${esc(refl.challenge)}</textarea></div>
+        <div class="refl-f"><label>&#127919; Intention for next week</label><textarea id="refl-intention" onchange="saveRefl()" placeholder="One word or sentence...">${esc(refl.intention)}</textarea></div>
+        <div class="refl-f"><label>&#128140; Notes</label><textarea id="refl-notes" onchange="saveRefl()" placeholder="Anything else...">${esc(refl.notes||'')}</textarea></div>
+      </div>
+      <button class="save-btn" onclick="saveRefl()">&#128190; Save Reflection</button>
+    </div>
+  </div>`;
+}
+
+function buildProgressSection(){
+  const days = ['Su','Mo','Tu','We','Th'];
+  const totalCBs = ITEMS.filter(i=>!['weekly_planning','financial_check','sibling_call'].includes(i.id)).length * days.length;
+  let checked = 0;
+  ITEMS.forEach(item=>{
+    days.forEach(d=>{
+      if(STATE[cbKey(item.id,d)]) checked++;
+    });
+  });
+  const pct = totalCBs>0?Math.round(checked/totalCBs*100):0;
+
+  const rolePairs = [
+    {r:'Father',   items:['mohamed_ready','nursery_drop','aw_a_family','aw_b_walk','aw_b_quality_time','sat_activity_mohamed']},
+    {r:'Husband',  items:['family_call','aw_a_dinner','thu_wife','aw_b_winddown','sat_before_sleep']},
+    {r:'Professional', items:['deep_work','emails_30','workshop_rounds','eod_prep','weekly_planning']},
+    {r:'Muslim',   items:['pray_sobh','azkar_sabah','dhuhr_asr_maghrib','night_azkar','fri_kahf']},
+    {r:'Self',     items:['bike_treadmill','aw_a_workout','sat_solo_walk','fri_bike','mood_review']},
+  ];
+  let bars = '<div class="prog-row"><div class="prog-rh"><span class="prog-lbl">Overall week completion</span><span class="prog-pct" id="prog-overall">${pct}%</span></div><div class="prog-bg"><div class="prog-fill" id="fill-overall" style="width:${pct}%"></div></div></div>';
+  bars = bars.replace('${pct}',pct).replace('${pct}%',pct+'%');
+  rolePairs.forEach(rp=>{
+    let rChecked = 0, rTotal = 0;
+    rp.items.forEach(id=>{
+      days.forEach(d=>{ rTotal++; if(STATE[cbKey(id,d)]) rChecked++; });
+    });
+    const rPct = rTotal>0?Math.round(rChecked/rTotal*100):0;
+    bars += `<div class="prog-row"><div class="prog-rh"><span class="prog-lbl">${esc(rp.r)}</span><span class="prog-pct" id="prog-${rp.r}">${rPct}%</span></div><div class="prog-bg"><div class="prog-fill" id="fill-${rp.r}" style="width:${rPct}%"></div></div></div>`;
+  });
+  return `<div class="sec-card" id="sec-progress">
+    <div class="sec-hdr">
+      <div class="sec-hdr-l"><span class="sec-emoji"></span><span class="sec-title">Weekly Progress</span></div>
+      <button class="toc-ret" onclick="openTOC()">&#9776;</button>
+    </div>
+    <div class="prog-body">${bars}</div>
+  </div>`;
+}
+
+function buildRulesSection(){
+  let cards = PERSONAL_RULES.map((r,i)=>`
+    <div class="rule-c" id="rule-card-${i}">
+      <button class="rule-del-btn" onclick="deleteRule(${i})" title="Remove rule">✕</button>
+      <div class="rule-n">Rule ${i+1}</div>
+      <div class="rule-t" data-editable data-edit-key="rule:${i}" contenteditable="false">${esc(r)}</div>
+    </div>`).join('');
+  return `<div class="sec-card" id="sec-rules">
+    <div class="sec-hdr">
+      <div class="sec-hdr-l"><span class="sec-emoji">📖</span><span class="sec-title">Personal Rules</span></div>
+      <button class="toc-ret" onclick="openTOC()">&#9776;</button>
+    </div>
+    <div class="rules-grid" id="rules-grid-inner">${cards}</div>
+    <div class="rule-add-row" style="display:none">
+      <input class="add-task-inp" id="rule-new-text" placeholder="New rule…" style="flex:1">
+      <button class="add-task-do" onclick="addRule()">+ Add Rule</button>
+    </div>
+  </div>`;
+}
+
+function buildDepartureSection(){
+  let tilesHtml = '';
+  DEPARTURE_ITEMS.forEach(item=>{
+    const key = 'dep:'+item.id;
+    const checked = STATE[key] ? 'chk' : '';
+    const optBadge = item.optional ? `<span style="background:var(--line);color:var(--muted);font-size:.62rem;padding:.1rem .45rem;border-radius:10px;margin-left:auto;flex-shrink:0">optional</span>` : '';
+    tilesHtml += `<div class="dep-tile ${checked}" id="deptile-${item.id}" onclick="toggleDep('${item.id}')">
+      <div class="dep-box">${checked ? '&#10003;' : ''}</div>
+      <span class="dep-lbl" data-editable data-edit-key="dep:label:${item.id}" contenteditable="false">${esc(item.label)}</span>
+      ${optBadge}
+      <button class="dep-del-btn" onclick="event.stopPropagation();removeDepItem('${item.id}')" title="Remove">✕</button>
+    </div>`;
+  });
+  const checkedCount = DEPARTURE_ITEMS.filter(i=>STATE['dep:'+i.id]).length;
+  return `<div class="sec-card" id="sec-departure">
+    <div class="sec-hdr">
+      <div class="sec-hdr-l"><span class="sec-emoji">️</span><span class="sec-title">Departure Checklist</span></div>
+      <button class="toc-ret" onclick="openTOC()">&#9776;</button>
+    </div>
+    <div class="dep-grid">${tilesHtml}</div>
+    <div class="dep-footer">
+      <span class="dep-cnt" id="dep-cnt">${checkedCount} / ${DEPARTURE_ITEMS.length} packed</span>
+      <button class="dep-rst" onclick="resetDeparture()">Reset all</button>
+    </div>
+    <div class="dep-edit-row">
+      <input class="add-task-inp" id="dep-new-label" placeholder="New checklist item…" style="flex:1">
+      <button class="add-task-do" onclick="addDepItem()">+ Add</button>
+    </div>
+  </div>`;
+}
+function toggleDep(itemId){
+  const key = 'dep:'+itemId;
+  STATE[key] = !STATE[key];
+  saveState(STATE);
+  const tile = document.getElementById('deptile-'+itemId);
+  if(!tile) return;
+  tile.classList.toggle('chk', !!STATE[key]);
+  const box = tile.querySelector('.dep-box');
+  if(box) box.innerHTML = STATE[key] ? '&#10003;' : '';
+  const checkedCount = DEPARTURE_ITEMS.filter(i=>STATE['dep:'+i.id]).length;
+  const cnt = document.getElementById('dep-cnt');
+  if(cnt) cnt.textContent = checkedCount+' / '+DEPARTURE_ITEMS.length+' packed';
+}
+
+function resetDeparture(){
+  DEPARTURE_ITEMS.forEach(i=>{ STATE['dep:'+i.id]=false; });
+  saveState(STATE);
+  DEPARTURE_ITEMS.forEach(i=>{
+    const tile = document.getElementById('deptile-'+i.id);
+    if(!tile) return;
+    tile.classList.remove('chk');
+    const box = tile.querySelector('.dep-box');
+    if(box) box.innerHTML='';
+  });
+  const cnt = document.getElementById('dep-cnt');
+  if(cnt) cnt.textContent = '0 / '+DEPARTURE_ITEMS.length+' packed';
+}
+
+function addMonthlyHabit(){
+  const nameEl = document.getElementById('mo-new-name');
+  const weeksEl = document.getElementById('mo-new-weeks');
+  const name = nameEl.value.trim();
+  const weeks = Math.max(1, Math.min(5, parseInt(weeksEl.value)||1));
+  if(!name) return;
+  MONTHLY_HABITS.push({ico:'', name:name.toUpperCase(), weeks});
+  EDITS['monthly:all'] = MONTHLY_HABITS.map(h=>({name:h.name,weeks:h.weeks}));
+  saveEdits(EDITS);
+  nameEl.value='';
+  weeksEl.value='1';
+  document.getElementById('monthlyContent').innerHTML = buildMonthlySection();
+  if(EDIT_MODE){
+    const mc = document.getElementById('monthlyContent');
+    mc.querySelectorAll('[data-editable]').forEach(el=>{el.contentEditable='true';el.addEventListener('blur',onEditableBlur);});
+  }
+  buildTOC();
+}
+
+function toggleDetail(detId, itemId){
+  const card = document.getElementById(detId);
+  const ind  = document.getElementById('texp-'+itemId);
+  if(!card) return;
+  const isOpen = card.classList.contains('open');
+  card.classList.toggle('open',!isOpen);
+  if(ind) ind.classList.toggle('open',!isOpen);
+}
+
+function toggleCB(itemId, day, el){
+  const key = cbKey(itemId, day);
+  STATE[key] = el.checked;
+  saveState(STATE);
+  updateProgress();
+}
+
+function toggleStep(itemId, idx){
+  const key = itemKey(itemId,'steps');
+  let done = STATE[key]||[];
+  if(done.includes(idx)) done = done.filter(i=>i!==idx);
+  else done.push(idx);
+  STATE[key] = done;
+  saveState(STATE);
+  // update display
+  const detId = 'det-'+itemId;
+  const item = ITEMS.find(i=>i.id===itemId);
+  if(!item) return;
+  const el = document.getElementById(detId);
+  if(!el) return;
+  const subItems = el.querySelectorAll('.sub-item');
+  subItems.forEach((si,i)=>{
+    si.classList.toggle('done', done.includes(i));
+    si.querySelector('.sub-chk').innerHTML = done.includes(i) ? '&#10003;':'';
+  });
+  const progBadge = el.querySelector('.sub-prog');
+  if(progBadge) progBadge.textContent = done.length+'/'+item.steps.length;
+}
+
+function resetSteps(itemId){
+  const key = itemKey(itemId,'steps');
+  STATE[key] = [];
+  saveState(STATE);
+  const detId = 'det-'+itemId;
+  const item = ITEMS.find(i=>i.id===itemId);
+  const el = document.getElementById(detId);
+  if(!el||!item) return;
+  el.querySelectorAll('.sub-item').forEach(si=>{ si.classList.remove('done'); si.querySelector('.sub-chk').innerHTML=''; });
+  const pb = el.querySelector('.sub-prog');
+  if(pb) pb.textContent = '0/'+item.steps.length;
+}
+
+function toggleMonthly(hi, w, key){
+  STATE[key] = !STATE[key];
+  saveState(STATE);
+  const dots = document.querySelectorAll('.mo-dot');
+  // find the right dot and toggle
+  const all = document.querySelectorAll('.mo-card');
+  all.forEach((card,ci)=>{
+    if(ci===hi){
+      const ds = card.querySelectorAll('.mo-dot');
+      ds.forEach((d,di)=>{ if(di===w-1) d.classList.toggle('done', !!STATE[key]); });
+    }
+  });
+}
+
+function setMood(dim, day, val, key, btn){
+  STATE[key] = val;
+  saveState(STATE);
+  // toggle sel on sibling buttons
+  const parent = btn.closest('.mood-col');
+  parent.querySelectorAll('.mood-ebtn').forEach(b=>b.classList.remove('sel'));
+  btn.classList.add('sel');
+}
+
+function togglePill(groupKey, val, el){
+  let arr = STATE[groupKey]||[];
+  if(arr.includes(val)) arr = arr.filter(v=>v!==val);
+  else arr.push(val);
+  STATE[groupKey] = arr;
+  saveState(STATE);
+  el.classList.toggle('act', arr.includes(val));
+}
+
+function saveRefl(){
+  const rKey = 'refl:'+currentWeek;
+  STATE[rKey] = {
+    win: (document.getElementById('refl-win')||{}).value||'',
+    challenge: (document.getElementById('refl-challenge')||{}).value||'',
+    intention: (document.getElementById('refl-intention')||{}).value||'',
+    notes: (document.getElementById('refl-notes')||{}).value||'',
+  };
+  saveState(STATE);
+}
+
+function saveFocus(){
+  const v = document.getElementById('focusGoal').value;
+  STATE['focus:'+currentWeek] = v;
+  saveState(STATE);
+}
+
+function updateProgress(){
+  const days=['Su','Mo','Tu','We','Th'];
+  const totalCBs = ITEMS.filter(i=>!['weekly_planning','financial_check','sibling_call'].includes(i.id)).length * days.length;
+  let checked = 0;
+  ITEMS.forEach(item=>{ days.forEach(d=>{ if(STATE[cbKey(item.id,d)]) checked++; }); });
+  const pct = totalCBs>0?Math.round(checked/totalCBs*100):0;
+  const ov = document.getElementById('prog-overall');
+  const fo = document.getElementById('fill-overall');
+  if(ov) ov.textContent = pct+'%';
+  if(fo) fo.style.width = pct+'%';
+  updateHeaderStats();
+}
+
+// ── TAB SWITCHING ────────────────────────────────────────────
+let currentTab = 'routine';
+function switchTab(tab, btn){
+  currentTab = tab;
+  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  const panel = document.getElementById('panel-'+tab);
+  if(panel) panel.classList.add('active');
+  if(btn) btn.classList.add('active');
+  // Re-activate editables if edit mode on
+  if(EDIT_MODE && panel){
+    panel.querySelectorAll('[data-editable]').forEach(el=>{
+      el.contentEditable='true';
+      el.addEventListener('blur', onEditableBlur);
+    });
+  }
+}
+
+// ── HEADER STATS ─────────────────────────────────────────────
+function updateHeaderStats(){
+  const days=['Su','Mo','Tu','We','Th'];
+  const totalItems = ITEMS.filter(i=>!['weekly_planning','financial_check','sibling_call'].includes(i.id));
+  const totalCBs = totalItems.length * days.length;
+  let checked = 0;
+  totalItems.forEach(item=>{ days.forEach(d=>{ if(STATE[cbKey(item.id,d)]) checked++; }); });
+  const pct = totalCBs>0?Math.round(checked/totalCBs*100):0;
+  // Today done
+  const todayDays = {0:'Su',1:'Mo',2:'Tu',3:'We',4:'Th',5:'Fr',6:'Sa'};
+  const todayKey = todayDays[new Date().getDay()]||'Su';
+  let todayDone = 0;
+  totalItems.forEach(item=>{ if(STATE[cbKey(item.id,todayKey)]) todayDone++; });
+  const weekMatch = currentWeek.match(/W(\d+)/);
+  const weekNo = weekMatch ? parseInt(weekMatch[1]) : '—';
+  const sd = document.getElementById('stat-done'); if(sd) sd.textContent = todayDone;
+  const st = document.getElementById('stat-total'); if(st) st.textContent = totalItems.length;
+  const sp = document.getElementById('stat-pct'); if(sp) sp.textContent = pct+'%';
+  const sw = document.getElementById('stat-week'); if(sw) sw.textContent = 'W'+weekNo;
+  const sc = document.getElementById('hdr-score-display'); if(sc) sc.textContent = pct+'% This Week';
+}
+
+// ── RULES EDITING ────────────────────────────────────────────
+function addRule(){
+  const inp = document.getElementById('rule-new-text');
+  if(!inp) return;
+  const text = inp.value.trim();
+  if(!text) return;
+  PERSONAL_RULES.push(text);
+  EDITS['rules:all'] = PERSONAL_RULES.slice();
+  saveEdits(EDITS);
+  inp.value='';
+  document.getElementById('rulesContent').innerHTML = buildRulesSection();
+  if(EDIT_MODE){
+    const rc = document.getElementById('rulesContent');
+    rc.querySelectorAll('[data-editable]').forEach(el=>{el.contentEditable='true';el.addEventListener('blur',onEditableBlur);});
+    const addRow = rc.querySelector('.rule-add-row');
+    if(addRow) addRow.style.display='flex';
+  }
+}
+
+function deleteRule(idx){
+  confirmAction('Remove this rule?', ()=>{
+    PERSONAL_RULES.splice(idx,1);
+    EDITS['rules:all'] = PERSONAL_RULES.slice();
+    saveEdits(EDITS);
+    document.getElementById('rulesContent').innerHTML = buildRulesSection();
+    if(EDIT_MODE){
+      const rc = document.getElementById('rulesContent');
+      rc.querySelectorAll('[data-editable]').forEach(el=>{el.contentEditable='true';el.addEventListener('blur',onEditableBlur);});
+      rc.querySelectorAll('.rule-del-btn,.rule-add-row').forEach(el=>el.style.display='flex');
+    }
+  });
+}
+
+// ── MONTHLY HABIT EDITING ─────────────────────────────────────
+function deleteMonthlyHabit(idx){
+  confirmAction('Remove this habit?', ()=>{
+    MONTHLY_HABITS.splice(idx,1);
+    EDITS['monthly:all'] = MONTHLY_HABITS.map(h=>({name:h.name,weeks:h.weeks}));
+    saveEdits(EDITS);
+    document.getElementById('monthlyContent').innerHTML = buildMonthlySection();
+    if(EDIT_MODE){
+      const mc = document.getElementById('monthlyContent');
+      mc.querySelectorAll('[data-editable]').forEach(el=>{el.contentEditable='true';el.addEventListener('blur',onEditableBlur);});
+    }
+  });
+}
+
+// ── CONFIRM HELPER (cross-device, no browser confirm()) ───────
+function confirmAction(msg, onYes){
+  // Remove any existing toast
+  const old = document.getElementById('confirm-toast');
+  if(old) old.remove();
+  const toast = document.createElement('div');
+  toast.id = 'confirm-toast';
+  toast.style.cssText = 'position:fixed;bottom:5rem;left:50%;transform:translateX(-50%);z-index:9999;background:#1c1c1c;color:#fff;border-radius:14px;padding:.85rem 1.2rem;display:flex;align-items:center;gap:.8rem;box-shadow:0 8px 32px rgba(0,0,0,.35);font-family:DM Sans,sans-serif;font-size:.85rem;min-width:240px;max-width:90vw';
+  toast.innerHTML = `<span style="flex:1">${msg}</span>
+    <button id="confirm-no" style="background:rgba(255,255,255,.15);border:none;color:#fff;border-radius:8px;padding:.4rem .8rem;cursor:pointer;font-size:.82rem;font-family:DM Sans,sans-serif">Cancel</button>
+    <button id="confirm-yes" style="background:#dc2626;border:none;color:#fff;border-radius:8px;padding:.4rem .8rem;cursor:pointer;font-size:.82rem;font-weight:600;font-family:DM Sans,sans-serif">Remove</button>`;
+  document.body.appendChild(toast);
+  document.getElementById('confirm-no').onclick = ()=>toast.remove();
+  document.getElementById('confirm-yes').onclick = ()=>{ toast.remove(); onYes(); };
+  // Auto-dismiss after 6 seconds
+  setTimeout(()=>{ if(toast.parentNode) toast.remove(); }, 6000);
+}
+
+// TOC
+function openTOC(){
+  document.getElementById('tocOverlay').classList.add('open');
+  document.getElementById('tocPanel').classList.add('open');
+}
+function closeTOC(){
+  document.getElementById('tocOverlay').classList.remove('open');
+  document.getElementById('tocPanel').classList.remove('open');
+}
+
+// Week picker
+function getWeekString(d){
+  const jan1=new Date(d.getFullYear(),0,1);
+  const weekNo=Math.ceil(((d-jan1)/86400000+jan1.getDay()+1)/7);
+  return d.getFullYear()+'-W'+String(weekNo).padStart(2,'0');
+}
+function onWeekChange(){
+  const val=document.getElementById('weekPicker').value;
+  if(val){ currentWeek=val; STATE=loadState(); buildMain(); buildTOC(); }
+}
+
+// ── EDIT MODE ────────────────────────────────────────────────
+let EDIT_MODE = false;
+const EDIT_SK = 'lifeos-edits-v1';
+
+function loadEdits(){ try{ return JSON.parse(localStorage.getItem(EDIT_SK))||{}; }catch(e){ return {}; } }
+function saveEdits(e){ localStorage.setItem(EDIT_SK,JSON.stringify(e)); }
+
+let EDITS = loadEdits();
+
+// Apply saved edits to ITEMS and SCHEDULE on boot
+function applyEdits(){
+  const e = EDITS;
+  // Item field overrides
+  ITEMS.forEach(item=>{
+    if(e['item:'+item.id+':name'])    item.name    = e['item:'+item.id+':name'];
+    if(e['item:'+item.id+':dur'])     item.dur     = e['item:'+item.id+':dur'];
+    if(e['item:'+item.id+':imp'])     item.imp     = e['item:'+item.id+':imp'];
+    if(e['item:'+item.id+':why'])     item.why     = e['item:'+item.id+':why'];
+    if(e['item:'+item.id+':cue'])     item.loop.cue      = e['item:'+item.id+':cue'];
+    if(e['item:'+item.id+':craving']) item.loop.craving  = e['item:'+item.id+':craving'];
+    if(e['item:'+item.id+':response'])item.loop.response = e['item:'+item.id+':response'];
+    if(e['item:'+item.id+':reward'])  item.loop.reward   = e['item:'+item.id+':reward'];
+    if(e['item:'+item.id+':steps'])   item.steps   = e['item:'+item.id+':steps'];
+  });
+  // Section label overrides
+  SCHEDULE.forEach(block=>{
+    block.cats.forEach(cat=>{
+      cat.sections.forEach(sec=>{
+        if(e['sec:'+sec.id+':label']) sec.label = e['sec:'+sec.id+':label'];
+      });
+    });
+  });
+  // Rules restore
+  if(e['rules:all'] && Array.isArray(e['rules:all'])){
+    PERSONAL_RULES.length = 0;
+    e['rules:all'].forEach(r=>PERSONAL_RULES.push(r));
+  } else {
+    // Individual rule edits
+    PERSONAL_RULES.forEach((r,i)=>{ if(e['rule:'+i]) PERSONAL_RULES[i]=e['rule:'+i]; });
+  }
+  // Monthly habit name edits
+  if(e['monthly:all'] && Array.isArray(e['monthly:all'])){
+    // Full replace — rebuild MONTHLY_HABITS from saved snapshot
+    MONTHLY_HABITS.length = 0;
+    e['monthly:all'].forEach(h=>MONTHLY_HABITS.push({ico:'',name:h.name,weeks:h.weeks}));
+  } else {
+    MONTHLY_HABITS.forEach((h,i)=>{ if(e['mo:'+i+':name']) h.name=e['mo:'+i+':name']; });
+  }
+  // Departure item label overrides
+  DEPARTURE_ITEMS.forEach(dep=>{
+    if(e['dep:label:'+dep.id]) dep.label = e['dep:label:'+dep.id];
+  });
+  // Custom added items
+  const extraIds = e['extra-items']||[];
+  extraIds.forEach(id=>{
+    if(!ITEMS.find(i=>i.id===id)){
+      const snap = e['item-snap:'+id];
+      if(snap) ITEMS.push(snap);
+    }
+  });
+  // Apply section key additions
+  SCHEDULE.forEach(block=>{
+    block.cats.forEach(cat=>{
+      cat.sections.forEach(sec=>{
+        const extra = e['sec:'+sec.id+':extra-keys']||[];
+        extra.forEach(k=>{ if(!sec.keys.includes(k)) sec.keys.push(k); });
+        const removed = e['sec:'+sec.id+':removed-keys']||[];
+        sec.keys = sec.keys.filter(k=>!removed.includes(k));
+      });
+    });
+  });
+  // Departure item additions/removals
+  const extraDep = e['extra-dep-items']||[];
+  extraDep.forEach(d=>{ if(!DEPARTURE_ITEMS.find(x=>x.id===d.id)) DEPARTURE_ITEMS.push(d); });
+  const removedDep = e['removed-dep-items']||[];
+  for(let i=DEPARTURE_ITEMS.length-1;i>=0;i--){
+    if(removedDep.includes(DEPARTURE_ITEMS[i].id)) DEPARTURE_ITEMS.splice(i,1);
+  }
+}
+
+function toggleEditMode(){
+  EDIT_MODE = !EDIT_MODE;
+  document.body.classList.toggle('edit-mode', EDIT_MODE);
+  const btn = document.getElementById('editModeBtn');
+  if(btn){
+    btn.classList.toggle('active', EDIT_MODE);
+    btn.textContent = EDIT_MODE ? '✅ Done Editing' : '✏️ Edit';
+  }
+  if(EDIT_MODE){
+    // activate all editables
+    document.querySelectorAll('[data-editable]').forEach(el=>{
+      el.contentEditable = 'true';
+      el.addEventListener('blur', onEditableBlur);
+    });
+    // show rule add row
+    document.querySelectorAll('.rule-add-row').forEach(el=>el.style.display='flex');
+  } else {
+    document.querySelectorAll('[data-editable]').forEach(el=>{
+      el.contentEditable = 'false';
+      el.removeEventListener('blur', onEditableBlur);
+    });
+    document.querySelectorAll('.rule-add-row').forEach(el=>el.style.display='none');
+  }
+}
+
+function onEditableBlur(e){
+  const el = e.target;
+  const key = el.dataset.editKey;
+  if(!key) return;
+  const val = el.innerText.trim();
+  EDITS[key] = val;
+  saveEdits(EDITS);
+  // Apply to in-memory data
+  applyEditKey(key, val);
+}
+
+function applyEditKey(key, val){
+  // item:ID:field
+  const m = key.match(/^item:([^:]+):(.+)$/);
+  if(m){
+    const item = ITEMS.find(i=>i.id===m[1]);
+    if(!item) return;
+    const field = m[2];
+    if(field==='name') item.name = val;
+    else if(field==='dur') item.dur = val;
+    else if(field==='why') item.why = val;
+    else if(field==='cue') item.loop.cue = val;
+    else if(field==='craving') item.loop.craving = val;
+    else if(field==='response') item.loop.response = val;
+    else if(field==='reward') item.loop.reward = val;
+  }
+  // rule:INDEX
+  const r = key.match(/^rule:(\d+)$/);
+  if(r){ const idx=parseInt(r[1]); if(idx<PERSONAL_RULES.length) PERSONAL_RULES[idx]=val; }
+  // mo:INDEX:name
+  const mn = key.match(/^mo:(\d+):name$/);
+  if(mn){ const idx=parseInt(mn[1]); if(idx<MONTHLY_HABITS.length) MONTHLY_HABITS[idx].name=val; }
+  // dep:label:ID
+  const d = key.match(/^dep:label:(.+)$/);
+  if(d){
+    const dep = DEPARTURE_ITEMS.find(x=>x.id===d[1]);
+    if(dep) dep.label = val;
+  }
+  // sec:ID:label
+  const s = key.match(/^sec:([^:]+):label$/);
+  if(s){
+    SCHEDULE.forEach(block=>block.cats.forEach(cat=>cat.sections.forEach(sec=>{
+      if(sec.id===s[1]) sec.label = val;
+    })));
+  }
+}
+
+// ─── Add a new task to a section ─────────────────────────────
+function addTaskToSection(secId){
+  const nameEl = document.getElementById('new-task-name-'+secId);
+  const durEl  = document.getElementById('new-task-dur-'+secId);
+  if(!nameEl) return;
+  const name = nameEl.value.trim();
+  if(!name) return;
+  const dur = (durEl&&durEl.value.trim()) || '—';
+  const newId = 'custom_'+Date.now();
+  const newItem = {
+    id:newId, ico:'', name, section:'Custom',
+    why:'Add your reason here.',
+    loop:{cue:'Custom cue',craving:'Custom craving',response:'Custom response',reward:'Custom reward'},
+    steps:['Step 1'], dur, imp:'🟡 Medium-High', tags:['Custom']
+  };
+  ITEMS.push(newItem);
+  // Persist
+  const extras = EDITS['extra-items']||[];
+  extras.push(newId);
+  EDITS['extra-items'] = extras;
+  EDITS['item-snap:'+newId] = JSON.parse(JSON.stringify(newItem));
+  // Add to section keys
+  const extraKeys = EDITS['sec:'+secId+':extra-keys']||[];
+  extraKeys.push(newId);
+  EDITS['sec:'+secId+':extra-keys'] = extraKeys;
+  saveEdits(EDITS);
+  // Find the section in SCHEDULE and add key
+  SCHEDULE.forEach(block=>block.cats.forEach(cat=>cat.sections.forEach(sec=>{
+    if(sec.id===secId && !sec.keys.includes(newId)) sec.keys.push(newId);
+  })));
+  nameEl.value='';
+  if(durEl) durEl.value='';
+  // Rebuild the section card
+  rebuildSection(secId);
+}
+
+function removeTaskFromSection(itemId, secId){
+  confirmAction('Remove this task?', ()=>{
+    SCHEDULE.forEach(block=>block.cats.forEach(cat=>cat.sections.forEach(sec=>{
+      if(sec.id===secId){ sec.keys = sec.keys.filter(k=>k!==itemId); }
+    })));
+    const removed = EDITS['sec:'+secId+':removed-keys']||[];
+    if(!removed.includes(itemId)) removed.push(itemId);
+    EDITS['sec:'+secId+':removed-keys'] = removed;
+    const ek = EDITS['sec:'+secId+':extra-keys']||[];
+    EDITS['sec:'+secId+':extra-keys'] = ek.filter(k=>k!==itemId);
+    saveEdits(EDITS);
+    rebuildSection(secId);
+  });
+}
+
+function rebuildSection(secId){
+  let targetSec = null, targetCat = null;
+  SCHEDULE.forEach(block=>block.cats.forEach(cat=>cat.sections.forEach(sec=>{
+    if(sec.id===secId){ targetSec=sec; targetCat=cat; }
+  })));
+  if(!targetSec) return;
+  const cardEl = document.getElementById('sec-'+secId);
+  if(!cardEl) return;
+  const newHtml = buildSection(targetSec, targetCat);
+  // Replace by inserting adjacent and removing old
+  cardEl.insertAdjacentHTML('afterend', newHtml);
+  cardEl.remove();
+  // Re-activate editables & delete buttons if in edit mode
+  if(EDIT_MODE){
+    const newCard = document.getElementById('sec-'+secId);
+    if(newCard){
+      newCard.querySelectorAll('[data-editable]').forEach(el=>{
+        el.contentEditable='true';
+        el.addEventListener('blur', onEditableBlur);
+      });
+    }
+  }
+}
+
+// ─── Add/remove step in detail card ──────────────────────────
+function addStep(itemId){
+  const item = ITEMS.find(i=>i.id===itemId);
+  if(!item) return;
+  item.steps.push('New step — click to edit');
+  EDITS['item:'+itemId+':steps'] = item.steps.slice();
+  saveEdits(EDITS);
+  rebuildDetailCard(itemId);
+}
+
+function removeStep(itemId, idx){
+  const item = ITEMS.find(i=>i.id===itemId);
+  if(!item) return;
+  item.steps.splice(idx,1);
+  EDITS['item:'+itemId+':steps'] = item.steps.slice();
+  saveEdits(EDITS);
+  STATE[itemKey(itemId,'steps')] = (STATE[itemKey(itemId,'steps')]||[]).filter(i=>i<item.steps.length);
+  saveState(STATE);
+  rebuildDetailCard(itemId);
+}
+
+function onStepBlur(itemId, idx, el){
+  const item = ITEMS.find(i=>i.id===itemId);
+  if(!item) return;
+  item.steps[idx] = el.innerText.trim();
+  EDITS['item:'+itemId+':steps'] = item.steps.slice();
+  saveEdits(EDITS);
+}
+
+function rebuildDetailCard(itemId){
+  const detId = 'det-'+itemId;
+  const el = document.getElementById(detId);
+  if(!el) return;
+  const wasOpen = el.classList.contains('open');
+  const parent = el.parentElement;
+  parent.innerHTML = buildDetailCard(ITEMS.find(i=>i.id===itemId), detId);
+  const newEl = document.getElementById(detId);
+  if(newEl && wasOpen) newEl.classList.add('open');
+  if(EDIT_MODE && newEl){
+    newEl.querySelectorAll('[data-editable]').forEach(e2=>{
+      e2.contentEditable='true';
+      e2.addEventListener('blur', onEditableBlur);
+    });
+  }
+}
+
+// ─── Departure item add/remove ────────────────────────────────
+function addDepItem(){
+  const inp = document.getElementById('dep-new-label');
+  if(!inp) return;
+  const label = inp.value.trim();
+  if(!label) return;
+  const newId = 'dep_custom_'+Date.now();
+  DEPARTURE_ITEMS.push({id:newId, label});
+  const extras = EDITS['extra-dep-items']||[];
+  extras.push({id:newId, label});
+  EDITS['extra-dep-items'] = extras;
+  saveEdits(EDITS);
+  inp.value='';
+  rebuildDeparture();
+}
+
+function removeDepItem(itemId){
+  confirmAction('Remove this item?', ()=>{
+    const idx = DEPARTURE_ITEMS.findIndex(d=>d.id===itemId);
+    if(idx!==-1) DEPARTURE_ITEMS.splice(idx,1);
+    const removed = EDITS['removed-dep-items']||[];
+    removed.push(itemId);
+    EDITS['removed-dep-items'] = removed;
+    const ex = EDITS['extra-dep-items']||[];
+    EDITS['extra-dep-items'] = ex.filter(e=>e.id!==itemId);
+    saveEdits(EDITS);
+    rebuildDeparture();
+  });
+}
+
+function rebuildDeparture(){
+  document.getElementById('departureContent').innerHTML = buildDepartureSection();
+  if(EDIT_MODE){
+    const dc = document.getElementById('departureContent');
+    dc.querySelectorAll('[data-editable]').forEach(el=>{el.contentEditable='true';el.addEventListener('blur',onEditableBlur);});
+  }
+}
+
+// ── INIT ────────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded',()=>{
+  EDITS = loadEdits();
+  applyEdits();
+  const now=new Date();
+  currentWeek=getWeekString(now);
+  const wp=document.getElementById('weekPicker');
+  if(wp) wp.value=currentWeek;
+  const fg=document.getElementById('focusGoal');
+  if(fg) fg.value=STATE['focus:'+currentWeek]||'';
+  // Restore custom monthly habits
+  const custom = STATE['customMonthlyHabits']||[];
+  custom.forEach(h=>{ MONTHLY_HABITS.push({ico:'',name:h.name,weeks:h.weeks}); });
+  buildTOC();
+  buildMain();
+});
+
+</script>
+</body></html>
